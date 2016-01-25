@@ -1,0 +1,30 @@
+<div class="container" ng-controller="fdController">
+
+    <div class="">
+      <div class="text-center">
+        <h1><span class="fa fa-anchor"></span>Deposit Details</h1>
+      </div>
+      <div class="text-right">
+        <strong>User Profile</strong>: (<a href="/profile">{{ user.local.email }}</a>)<br>
+        <a href="/" ng-click="logout()" class="btn btn-default btn-sm">Logout</a>
+      </div>
+    </div>
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-12">
+            <div class="well">
+                <h3><i class="fa fa-credit-card"></i> List of Deposits</h3>
+
+                    <p>
+                      <table id="list2"></table>
+                      <div id="pager2"></div>
+                    </p>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

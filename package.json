@@ -1,0 +1,38 @@
+{
+  "name": "easyFin4u",
+  "version": "0.0.0",
+  "description": "Easy Finance Manager",
+  "main": "server.js",
+  "author": "Sandeep Saini",
+  "dependencies": {
+    "express": "~4.0.0",
+    "ejs": "~0.8.5",
+    "mongoose": "~3.8.1",
+    "passport": "~0.1.17",
+    "passport-local": "~0.1.6",
+    "passport-facebook": "~1.0.2",
+    "passport-twitter": "~1.0.2",
+    "passport-google-oauth": "~0.1.5",
+    "connect-flash": "~0.1.1",
+    "bcrypt-nodejs": "latest",
+    "morgan": "~1.0.0",
+    "body-parser": "~1.0.0",
+    "cookie-parser": "~1.0.0",
+    "method-override": "~1.0.0",
+    "express-session": "~1.0.0",
+    "sendgrid": "^1.9.2",
+    "moment": "2.0.0",
+    "nodemailer": "2.0.0",
+    "nodemailer-smtp-transport": "2.0.0",
+    "crypto": "0.0.3",
+    "async": "1.5.2",
+    "mongoose-encryption": "1.2.0",
+    "node-schedule": "0.6.0",
+    "node-cache": "3.0.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-plumber": "^1.0.1",
+    "gulp-sass": "^2.1.1"
+  }
+}

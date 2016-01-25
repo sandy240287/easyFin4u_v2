@@ -1,0 +1,25 @@
+{
+  "name": "easyFin4u",
+  "homepage": "https://github.com/sandy240287/easyFin4u_v2",
+  "authors": [
+    "Sandeep Saini"
+  ],
+  "description": "",
+  "moduleType": "globals",
+  "main": [
+  ],
+  "keywords": [
+  ],
+  "license": "MIT",
+  "ignore": [
+  ],
+  "dependencies": {
+    "angular": "1.4.9",
+    "bootstrap": "~3.0.0",
+    "jquery": "~2.0.3",
+    "underscore": "~1.5.2",
+    "angular-strap": "2.3.7",
+    "moment":"2.11.1"
+  },
+  "version": "1.0.0"
+}
