@@ -15,7 +15,7 @@ module.exports = {reminderService: function() {
   //function reminderService(){
     async.waterfall([
       function createUserCache(done){
-          //var query = {'local.email' : 'sandeep.saini.cs@gmail.com' };
+
           User.find({},function(err, users) {
               //console.log("Inside createUserCache");
               // if there is an error retrieving, send the error.
@@ -60,8 +60,8 @@ module.exports = {reminderService: function() {
                   var options = {
                                 service: 'SendGrid',
                                 auth: {
-                                  user: 'sandeep.saini.cs@gmail.com',
-                                  pass: 'Sandeep@1987'
+                                  user: '<email>',
+                                  pass: '<password>'
                                 }
                               };
                   var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
