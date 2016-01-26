@@ -6,20 +6,18 @@
   ],
   "description": "",
   "moduleType": "globals",
-  "main": [
-  ],
-  "keywords": [
-  ],
+  "main": [],
+  "keywords": [],
   "license": "MIT",
-  "ignore": [
-  ],
+  "ignore": [],
   "dependencies": {
     "angular": "1.4.9",
     "bootstrap": "~3.0.0",
     "jquery": "~2.0.3",
     "underscore": "~1.5.2",
     "angular-strap": "2.3.7",
-    "moment":"2.11.1"
+    "moment": "2.11.1",
+    "angular-chart.js": "~0.8.8"
   },
   "version": "1.0.0"
 }

@@ -65,6 +65,10 @@ module.exports = function(app, passport) {
         res.redirect('/');
     });
 
+    app.get('/portfolio', isLoggedIn, function(req, res) {
+        res.redirect('/');
+    });
+
     // =====================================
     // LOGOUT ==============================
     // =====================================

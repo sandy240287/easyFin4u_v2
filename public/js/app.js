@@ -1,4 +1,4 @@
-angular.module('easyFin4uApp', ['ngCookies', 'ngResource', 'ngMessages', 'ngRoute', 'mgcrea.ngStrap'])
+angular.module('easyFin4uApp', ['chart.js','ngCookies', 'ngResource', 'ngMessages', 'ngRoute', 'mgcrea.ngStrap'])
   .config(['$locationProvider','$routeProvider', function($locationProvider,$routeProvider)
   {
     $locationProvider.html5Mode(true);
@@ -26,6 +26,10 @@ angular.module('easyFin4uApp', ['ngCookies', 'ngResource', 'ngMessages', 'ngRout
     .when('/forgot', {
       templateUrl: 'views/forgot.html',
       controller: 'forgotController'
+    })
+    .when('/portfolio', {
+      templateUrl: 'views/portfolio.html',
+      controller: 'portfolioController'
     })
     .otherwise({
       redirectTo: '/'

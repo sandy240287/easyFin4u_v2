@@ -1,0 +1,62 @@
+<style type='text/css'>
+  h1, h2, h3 {
+      margin-top: 0px;
+      margin-bottom: 0px;
+  }
+</style>
+<div class="container" ng-controller="portfolioController">
+
+    <div class="">
+      <div class="text-right">
+        <strong>User Profile</strong>: (<a href="/profile">{{ user.local.email }}</a>)<br>
+        <a href="/" ng-click="logout()" class="btn btn-default btn-sm">Logout</a>
+      </div>
+    </div>
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-12">
+            <div class="well">
+                <h3><i class="fa fa-credit-card"></i> Portfolio Details</h3>
+
+                    <p>
+                      <table id="list2"></table>
+                      <div id="pager2"></div>
+                    </p>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+
+        <!-- LOCAL INFORMATION -->
+        <div class="col-sm-6">
+            <div class="well">
+                <h3><i class="fa fa-line-chart"></i> Portfolio Performance</h3>
+
+                    <p>
+                      <canvas id="line" class="chart chart-line" chart-data="linedata" chart-labels="linelabels"
+    chart-legend="legend" chart-series="lineseries" chart-click="onClick" ></canvas>
+                    </p>
+
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="well">
+                <h3><i class="fa fa-pie-chart"></i> Portfolio Distribution</h3>
+
+                    <p>
+                      <canvas id="pie" class="chart chart-pie" chart-legend="legend"
+                        chart-data="piedata" chart-labels="pielabels">
+                      </canvas>
+                    </p>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

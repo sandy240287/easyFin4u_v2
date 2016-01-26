@@ -49,14 +49,15 @@ angular.module('easyFin4uApp')
 				                                    required: true
 				                                }}
 				           	],
-				           	rowNum:10,
-				           	rowList:[10,20,30],
+				           	rowNum:20,
+				           	rowList:[5,10,20,30],
 				           	pager: '#pager2',
 				           	sortname: 'number',
 				            viewrecords: true,
 				            sortorder: "desc",
 				            caption:"Deposit List",
 				            width:'100%',
+										height: '100%',
 				            editurl: "/api/deposits",
 				            rownumbers : true
 				        });
