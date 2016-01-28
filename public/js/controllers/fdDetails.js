@@ -64,6 +64,40 @@ angular.module('easyFin4uApp')
 
 				        $("#list2").navGrid("#pager2",
 				                        { edit: true, add: true, del: true, search: false, refresh: true, view: false, align: "left" },
+																{ // edit option
+                                    beforeShowForm: function(form) {
+                                      $('#name', form).attr("disabled","true");  //To Disable Edit Box
+                                      /* To Centralize Edit Modal */
+                                      var dlgDiv = $("#editmod" + "list2");
+                                      var parentDiv = dlgDiv.parent(); // div#gbox_list
+                                      var dlgWidth = dlgDiv.width();
+                                      var parentWidth = parentDiv.width();
+                                      var dlgHeight = dlgDiv.height();
+                                      var parentHeight = parentDiv.height();
+                                      // TODO: change parentWidth and parentHeight in case of the grid
+                                      //       is larger as the browser window
+                                      //dlgDiv[0].style.top = Math.round((parentHeight-dlgHeight)/2) + "px";
+                                      dlgDiv[0].style.left = Math.round((parentWidth-dlgWidth)/2) + "px";
+                                      /* To Centralize Edit Modal */
+                                    }
+                                },
+                                { // add option
+                                  beforeShowForm: function(form) {
+                                    $('#name', form).attr("disabled","true");  //To Disable Edit Box
+                                    /* To Centralize Edit Modal */
+                                    var dlgDiv = $("#editmod" + "list2");
+                                    var parentDiv = dlgDiv.parent(); // div#gbox_list
+                                    var dlgWidth = dlgDiv.width();
+                                    var parentWidth = parentDiv.width();
+                                    var dlgHeight = dlgDiv.height();
+                                    var parentHeight = parentDiv.height();
+                                    // TODO: change parentWidth and parentHeight in case of the grid
+                                    //       is larger as the browser window
+                                    //dlgDiv[0].style.top = Math.round((parentHeight-dlgHeight)/2) + "px";
+                                    dlgDiv[0].style.left = Math.round((parentWidth-dlgWidth)/2) + "px";
+                                    /* To Centralize Edit Modal */
+                                  }
+                                },
 				                        { closeAfterEdit: true , closeAfterAdd: true }
 				                    );
 				     });

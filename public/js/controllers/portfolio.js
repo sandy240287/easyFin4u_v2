@@ -3,7 +3,7 @@ angular.module('easyFin4uApp')
     // Configure all charts
     ChartJsProvider.setOptions({
       colours: ['#FF5252', '#FF8A80'],
-      responsive: false
+      responsive: true
     });
     // Configure all line charts
     ChartJsProvider.setOptions('Line', {
@@ -98,10 +98,38 @@ angular.module('easyFin4uApp')
 				        $("#list2").navGrid("#pager2",
 				                        { edit: true, add: true, del: true, search: false, refresh: true, view: false, align: "left" },
                                 { // edit option
-                                    beforeShowForm: function(form) { $('#name', form).attr("disabled","true"); }
+                                    beforeShowForm: function(form) {
+                                      $('#name', form).attr("disabled","true");  //To Disable Edit Box
+                                      /* To Centralize Edit Modal */
+                                      var dlgDiv = $("#editmod" + "list2");
+                                      var parentDiv = dlgDiv.parent(); // div#gbox_list
+                                      var dlgWidth = dlgDiv.width();
+                                      var parentWidth = parentDiv.width();
+                                      var dlgHeight = dlgDiv.height();
+                                      var parentHeight = parentDiv.height();
+                                      // TODO: change parentWidth and parentHeight in case of the grid
+                                      //       is larger as the browser window
+                                      //dlgDiv[0].style.top = Math.round((parentHeight-dlgHeight)/2) + "px";
+                                      dlgDiv[0].style.left = Math.round((parentWidth-dlgWidth)/2) + "px";
+                                      /* To Centralize Edit Modal */
+                                    }
                                 },
                                 { // add option
-                                    beforeShowForm: function(form) { $('#name', form).attr("disabled","true"); }
+                                  beforeShowForm: function(form) {
+                                    $('#name', form).attr("disabled","true");  //To Disable Edit Box
+                                    /* To Centralize Edit Modal */
+                                    var dlgDiv = $("#editmod" + "list2");
+                                    var parentDiv = dlgDiv.parent(); // div#gbox_list
+                                    var dlgWidth = dlgDiv.width();
+                                    var parentWidth = parentDiv.width();
+                                    var dlgHeight = dlgDiv.height();
+                                    var parentHeight = parentDiv.height();
+                                    // TODO: change parentWidth and parentHeight in case of the grid
+                                    //       is larger as the browser window
+                                    //dlgDiv[0].style.top = Math.round((parentHeight-dlgHeight)/2) + "px";
+                                    dlgDiv[0].style.left = Math.round((parentWidth-dlgWidth)/2) + "px";
+                                    /* To Centralize Edit Modal */
+                                  }
                                 },
                       				  { closeAfterEdit: true , closeAfterAdd: true }
                       				    );
@@ -125,8 +153,18 @@ angular.module('easyFin4uApp')
 						 		];
 						 	}, 3000);
 
-							$scope.pielabels = ["Download Sales", "In-Store Sales", "Mail-Order Sales"];
-  						$scope.piedata = [300, 500, 100];
+              $scope.pieOptions = {
+                animationEasing : "easeOutBounce",
+                tooltipTemplate: "<%if (label){%><%=label %> : <%}%><%= value + ' %' %>",
+                responsive: true,
+                tooltipFontSize: 10
+              };
+
+              $http.get("/api/getDistributionData").then(function(response) {
+                  //console.log(response);
+                  $scope.pielabels = response.data.label;
+                  $scope.piedata = response.data.data;
+              });
 
 					 }
 

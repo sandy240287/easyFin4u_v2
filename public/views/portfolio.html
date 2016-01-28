@@ -3,6 +3,11 @@
       margin-top: 0px;
       margin-bottom: 0px;
   }
+
+  .pie-legend{
+    text-align:left;
+  }
+
 </style>
 <div class="container" ng-controller="portfolioController">
 
@@ -49,7 +54,7 @@
                 <h3><i class="fa fa-pie-chart"></i> Portfolio Distribution</h3>
 
                     <p>
-                      <canvas id="pie" class="chart chart-pie" chart-legend="legend"
+                      <canvas id="pie" class="chart chart-pie" chart-legend="legend" chart-options="pieOptions"
                         chart-data="piedata" chart-labels="pielabels">
                       </canvas>
                     </p>
