@@ -51,6 +51,17 @@ module.exports = function(app) {
         }
       });
 
+      app.get('/api/symbolSearch', function(req, res) {
+
+        
+
+      });
+
+
+
+
+
+
 
 var getUserPortfolioData = function(req,res,done){
 

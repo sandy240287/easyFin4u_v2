@@ -26,9 +26,42 @@ angular.module('easyFin4uApp')
 				        	  datatype: "json",
 				           	colNames:['Symbol','Name', 'Last Price', 'Change %','Shares','Cost Per Share','Cost Basis','Mkt Value','Gain','Gain %', 'Overall Return'],
 				           	colModel:[
-                   {name:'symbol', width:80, align:"left", key:true ,editable: true,editrules:{
-				                                    required: true
-				                                }},
+                    {name:'symbol', width:80, align:"left", key:true ,editable: true,editrules:{required: true},
+                          editoptions: {
+                                          "dataInit": function(el) {
+                                            setTimeout(function() {
+                                              if (jQuery.ui) {
+                                                if (jQuery.ui.autocomplete) {
+                                                  jQuery(el).autocomplete({
+                                                    "appendTo": "body",
+                                                    "disabled": false,
+                                                    "delay": 300,
+                                                    "minLength": 1,
+                                                    "source": function(request, response) {
+                                                      request.acelem = 'symbolSearch';
+                                                      request.oper = 'autocmpl';
+                                                      $.ajax({
+                                                        url: "grid.php",
+                                                        dataType: "json",
+                                                        data: request,
+                                                        type: "GET",
+                                                        error: function(res, status) {
+                                                          alert(res.status + " : " + res.statusText + ". Status: " + status);
+                                                        },
+                                                        success: function(data) {
+                                                          response(data);
+                                                        }
+                                                      });
+                                                    }
+                                                  });
+                                                  jQuery(el).autocomplete('widget').css('font-size', '11px');
+                                                  jQuery(el).autocomplete('widget').css('z-index', '1000');
+                                                }
+                                              }
+                                            }, 200);
+                                          }
+                                        }
+                      },
 				           		{name:'name', width:250, align:"left"},
 				           		{name:'lastprice', width:80, align:"right"},
 				           		{name:'chg_percent', width:80, align:"right"},
