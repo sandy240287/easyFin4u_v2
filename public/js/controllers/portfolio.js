@@ -24,7 +24,7 @@ angular.module('easyFin4uApp')
 				           	url:'/api/userPortfolio',
 				            mtype: "GET",
 				        	  datatype: "json",
-				           	colNames:['Symbol','Name', 'Last Price', 'Change %','Shares','Cost Per Share','Cost Basis','Mkt Value','Gain','Gain %', 'Overall Return'],
+				           	colNames:['Symbol','Name', 'Last Price', 'Change %','Shares','Cost Per Share','Cost Basis','Mkt Value','Gain','Gain %'],
 				           	colModel:[
                     {name:'symbol', width:80, align:"left", key:true ,editable: true,editrules:{required: true},
                           editoptions: {
@@ -41,7 +41,7 @@ angular.module('easyFin4uApp')
                                                       request.acelem = 'symbolSearch';
                                                       request.oper = 'autocmpl';
                                                       $.ajax({
-                                                        url: "grid.php",
+                                                        url: "/api/symbolSearch",
                                                         dataType: "json",
                                                         data: request,
                                                         type: "GET",
@@ -52,6 +52,11 @@ angular.module('easyFin4uApp')
                                                           response(data);
                                                         }
                                                       });
+                                                    },
+                                                    select: function( event, ui ) {
+                                                      $( "#symbol" ).val( ui.item.value );
+                                                      $( "#name" ).val( ui.item.label );
+                                                      return false;
                                                     }
                                                   });
                                                   jQuery(el).autocomplete('widget').css('font-size', '11px');
@@ -62,7 +67,7 @@ angular.module('easyFin4uApp')
                                           }
                                         }
                       },
-				           		{name:'name', width:250, align:"left"},
+				           		{name:'name', width:350, align:"left", editable: true},
 				           		{name:'lastprice', width:80, align:"right"},
 				           		{name:'chg_percent', width:80, align:"right"},
 				           		{name:'shares_qty', width:50, align:"right",editable: true,editrules:{
@@ -76,8 +81,7 @@ angular.module('easyFin4uApp')
 				           		{name:'cost_basis', width:100,align:"right"},
 				           		{name:'mkt_value', width:100, align:"right"},
 				           		{name:'gain', width:80, align:"right"},
-				           		{name:'gain_percent', width:80, align:"right"},
-				           		{name:'overall_return', width:100, align:"right"}
+				           		{name:'gain_percent', width:80, align:"right"}
 				           	],
 				           	rowNum:20,
 				           	rowList:[5,10,20,30],
@@ -93,8 +97,14 @@ angular.module('easyFin4uApp')
 
 				        $("#list2").navGrid("#pager2",
 				                        { edit: true, add: true, del: true, search: false, refresh: true, view: false, align: "left" },
-				                        { closeAfterEdit: true , closeAfterAdd: true }
-				                    );
+                                { // edit option
+                                    beforeShowForm: function(form) { $('#name', form).attr("disabled","true"); }
+                                },
+                                { // add option
+                                    beforeShowForm: function(form) { $('#name', form).attr("disabled","true"); }
+                                },
+                      				  { closeAfterEdit: true , closeAfterAdd: true }
+                      				    );
 				     });
 
 						 	$scope.linelabels = ["January", "February", "March", "April", "May", "June", "July"];

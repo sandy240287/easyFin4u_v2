@@ -23,6 +23,7 @@ module.exports = function(app) {
         var options = { upsert: 'true' };
         userPortfolio.findOneAndUpdate(query, { $set: {
           symbol : req.body.symbol,
+          name : req.body.name,
           shares_qty : req.body.shares_qty,
           cost_per_share : req.body.cost_per_share,
           userid : req.user._id
@@ -52,14 +53,33 @@ module.exports = function(app) {
       });
 
       app.get('/api/symbolSearch', function(req, res) {
-
-        
-
+            var returnData = [];
+            var symbolData = {};
+            var solrDocs = [];
+            //console.log("Request: "+JSON.stringify(req.query.term));
+            var url = "http://localhost:8983/solr/symbol_core/select?q="+req.query.term+"*&wt=json&indent=true&rows=50";
+            //console.log(url);
+            request(url, function (error, response, body) {
+              if (!error && response.statusCode == 200) {
+                body = JSON.parse(body);
+                solrDocs = body.response.docs; //Extract the response docs
+                for(doc in solrDocs){
+                  //console.log(data.list.resources[1].fields.price);
+                  symbolData = {
+                    value : solrDocs[doc].SYMBOL[0],
+                    label : "( "+solrDocs[doc].SYMBOL[0]+" )"+" - " + solrDocs[doc].NAME[0]
+                  };
+                  returnData.push(symbolData);
+                }
+                //console.log(returnData);
+                res.json(returnData);
+              }
+              if (error){
+                console.log("ERROR"+error);
+                //done(error);
+              }
+            });
       });
-
-
-
-
 
 
 
