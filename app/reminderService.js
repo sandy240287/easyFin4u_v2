@@ -90,7 +90,7 @@ module.exports = {reminderService: function() {
         }
     ], function (error) {
         if (error) {
-            console.log(deposit);
+            console.log(error);
             process.exit(1);
         }
     });

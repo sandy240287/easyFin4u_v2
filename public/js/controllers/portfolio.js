@@ -21,17 +21,15 @@ angular.module('easyFin4uApp')
 				      angular.element(document).ready(function () {
 				        console.log("Inside Document Ready");
 				        $("#list2").jqGrid({
-				           	url:'/api/portfolio',
+				           	url:'/api/userPortfolio',
 				            mtype: "GET",
 				        	  datatype: "json",
 				           	colNames:['Symbol','Name', 'Last Price', 'Change %','Shares','Cost Per Share','Cost Basis','Mkt Value','Gain','Gain %', 'Overall Return'],
 				           	colModel:[
-				           		{name:'symbol', width:80, align:"left", editable: true,editrules:{
+                   {name:'symbol', width:80, align:"left", key:true ,editable: true,editrules:{
 				                                    required: true
 				                                }},
-				           		{name:'name', width:250, align:"left", key:true, editable: true,editrules:{
-				                                    required: true
-				                                }},
+				           		{name:'name', width:250, align:"left"},
 				           		{name:'lastprice', width:80, align:"right"},
 				           		{name:'chg_percent', width:80, align:"right"},
 				           		{name:'shares_qty', width:50, align:"right",editable: true,editrules:{
@@ -51,13 +49,12 @@ angular.module('easyFin4uApp')
 				           	rowNum:20,
 				           	rowList:[5,10,20,30],
 				           	pager: '#pager2',
-				           	sortname: 'number',
 				            viewrecords: true,
 				            sortorder: "desc",
 				            caption:"Deposit List",
 				            width:'100%',
 										height: '100%',
-				            editurl: "/api/portfolio",
+				            editurl: "/api/userPortfolio",
 				            rownumbers : true
 				        });
 
