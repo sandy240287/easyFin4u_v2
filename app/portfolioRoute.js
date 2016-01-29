@@ -7,21 +7,35 @@ var request = require('request');
 var async = require('async');
 
 
-module.exports = function(app) {
+module.exports = function(app,passport) {
   app.get('/api/userPortfolio', function(req, res) {
+
+    /* To Handle server re-starts */
+    if(req.user === undefined)
+      res.redirect('/');
+      /* To Handle server re-starts */
 
     getUserPortfolioData(req,res);
 
     });
 
     app.post('/api/userPortfolio', function(req, res) {
+
+      /* To Handle server re-starts */
+      if(req.user === undefined)
+        res.redirect('/');
+        /* To Handle server re-starts */
+
       //console.log("POST"+JSON.stringify(req.body, null, 2));
       if((req.body.oper === 'add') || (req.body.oper === 'edit')){
 
         // create a Portfolio Data, information comes from AJAX request from Angular
         var query = { $and: [ { userid: req.user._id }, { symbol: req.body.symbol } ]};
-        //var query = { symbol: req.body.symbol };
+
         var options = { upsert: 'true' };
+        console.log(JSON.stringify(query));
+        console.log(JSON.stringify(userPortfolio));
+
         userPortfolio.findOneAndUpdate(query, { $set: {
           symbol : req.body.symbol,
           name : req.body.name,
@@ -54,6 +68,12 @@ module.exports = function(app) {
       });
 
       app.get('/api/symbolSearch', function(req, res) {
+
+        /* To Handle server re-starts */
+        if(req.user === undefined)
+          res.redirect('/');
+          /* To Handle server re-starts */
+
             var returnData = [];
             var symbolData = {};
             var solrDocs = [];
@@ -83,10 +103,18 @@ module.exports = function(app) {
       });
 
       app.get('/api/getDistributionData', function(req, res) {
+
+        /* To Handle server re-starts */
+        if(req.user === undefined)
+          res.redirect('/');
+          /* To Handle server re-starts */
+
+
         var query = {userid: req.user._id};
         var distributionLabel = [];
         var distributionData = [];
         var completeData = {};
+        var totalStockQty = 0, percentShare = 0;
         //console.log(JSON.stringify(query));
 
         userPortfolio2.find(query,function(err, userPortfolios) {
@@ -95,10 +123,15 @@ module.exports = function(app) {
             console.log("Error:"+ err);
             res.send(err);
           }
-          //console.log(JSON.stringify(userPortfolios));
-          for (userPortfolio in userPortfolios){
-            distributionLabel.push(userPortfolios[userPortfolio].name);
-            distributionData.push(userPortfolios[userPortfolio].shares_qty);
+          for (porData in userPortfolios){
+            totalStockQty = parseInt(totalStockQty) + parseInt(userPortfolios[porData].shares_qty);
+          }
+          //console.log(JSON.stringify(totalStockQty));
+          for (porData in userPortfolios){
+            distributionLabel.push(userPortfolios[porData].name);
+            //Convert Share Distribution to Percent
+            percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
+            distributionData.push(percentShare);
           }
           completeData = {label :  distributionLabel, data : distributionData };
           //console.log(JSON.stringify(completeData));
@@ -111,6 +144,8 @@ module.exports = function(app) {
 var getUserPortfolioData = function(req,res,done){
 
   var query = {userid: req.user._id};
+
+  console.log(JSON.stringify(query));
 
   async.waterfall([
 
@@ -148,10 +183,10 @@ var getUserPortfolioData = function(req,res,done){
               cost_per_share : parseFloat(userPortfolio.cost_per_share).toFixed(3),
               cost_basis : parseFloat(userPortfolio.cost_per_share * userPortfolio.shares_qty).toFixed(3) ,
               mkt_value : parseFloat(userPortfolio.shares_qty*body.list.resources[0].resource.fields.price).toFixed(3),
-              gain : parseFloat(parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)) -
-              (parseInt(userPortfolio.shares_qty)*parseInt(body.list.resources[0].resource.fields.price)).toFixed(3),
-              gain_percent : parseFloat((((parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)) -
-              (parseInt(userPortfolio.shares_qty)*parseInt(body.list.resources[0].resource.fields.price)))/
+              gain : (parseFloat(parseInt(userPortfolio.shares_qty)*parseInt(body.list.resources[0].resource.fields.price)).toFixed(3)) -
+              (parseFloat(parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)).toFixed(3)),
+              gain_percent : parseFloat(((parseFloat(parseInt(userPortfolio.shares_qty)*parseInt(body.list.resources[0].resource.fields.price)).toFixed(3) -
+              parseFloat(parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)).toFixed(3))/
               (parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)))*100).toFixed(3)
 
             };

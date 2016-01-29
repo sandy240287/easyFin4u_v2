@@ -10,7 +10,8 @@ angular.module('easyFin4uApp')
         $location.url('/login');
 			else{
 				      angular.element(document).ready(function () {
-				        console.log("Inside Document Ready");
+
+				        //console.log("Inside Document Ready");
 				        $("#list2").jqGrid({
 				           	url:'/api/deposits',
 				            mtype: "GET",
@@ -100,6 +101,33 @@ angular.module('easyFin4uApp')
                                 },
 				                        { closeAfterEdit: true , closeAfterAdd: true }
 				                    );
+
+														var intro = introJs();
+														intro.setOptions({
+														            steps: [
+														              {
+														                intro: "Hello world!"
+														              },
+														              {
+														                element: document.querySelector('#portfolioTab'),
+														                intro: "Click here after login for Portfolio Management"
+														              },
+														              {
+														                element: document.querySelector('#depositTab'),
+														                intro: "Click here after login for Deposit Management"
+														              },
+														              {
+														                element: document.querySelector('#depositTable'),
+														                intro: "Enter the Deposit Details using the '+' button on the bottom left of the table. Edit the details by selecting the row and selecting the Pencil button on the bottom bar.",
+														                position: 'left'
+														              }
+														            ],
+																				showStepNumbers:false
+														          });
+														intro.start();
+														intro.oncomplete(function() {
+														  $('.introjs-overlay').hide();
+														});
 				     });
 					 }
 

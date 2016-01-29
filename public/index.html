@@ -22,7 +22,8 @@
 	<!-- <script src="/include/js/dataLoad.js"></script> -->
 	<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.css">
 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
-  <link rel="stylesheet" href="bower_components/angular-chart.js/dist/angular-chart.css">
+  <link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">
+  <link rel="stylesheet" href="/bower_components/intro.js/introjs.css">
 </head>
 <body>
 	<div class="navbar navbar-default navbar-static-top"
@@ -33,8 +34,8 @@
 	      Easy Finance <strong>Manager</strong></a>
 	  </div>
 	  <ul class="nav navbar-nav">
-	    <li data-match-route="/portfolio"><a href="/portfolio">Portfolio</a></li>
-	    <li data-match-route="/fdDetails"><a href="/fdDetails">Deposit</a></li>
+	    <li id="portfolioTab" data-match-route="/portfolio"><a href="/portfolio">Portfolio</a></li>
+	    <li id="depositTab" data-match-route="/fdDetails"><a href="/fdDetails">Deposit</a></li>
 	  </ul>
 	  <ul class="nav navbar-nav pull-right" ng-if="currentUser">
 	    <li class="navbar-text" ng-bind="currentUser.email"></li>
@@ -42,13 +43,15 @@
 	  </ul>
 	</div>
 
-<div class="topPad" ng-view></div>
+<div class="topPad" ng-view>
+</div>
 
 <script src="/bower_components/angular/angular.js"></script>
 <script src="/bower_components/angular-strap/dist/angular-strap.js"></script>
 <script src="/bower_components/angular-strap/dist/angular-strap.tpl.js"></script>
 <script src="/bower_components/Chart.js/Chart.min.js"></script>
 <script src="/bower_components/angular-chart.js/dist/angular-chart.js"></script>
+<script src="/bower_components/intro.js/intro.js"></script>
 <script src="./vendor/angular-messages.js"></script>
 <script src="./vendor/angular-resource.js"></script>
 <script src="./vendor/angular-route.js"></script>

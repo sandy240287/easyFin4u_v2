@@ -5,11 +5,11 @@ var mongoose = require('mongoose');
 var historicalStock = new mongoose.Schema({
   symbol : String,
   date : Date,
-  value : String,
   day_high: String,
   day_low: String,
-  year_high : String,
-  year_low : String
+  day_open : String,
+  day_close : String,
+  day_end_adjusted : String
 });
 
 //depositSchema.plugin(encrypt, { secret: secret });

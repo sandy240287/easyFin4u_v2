@@ -3,8 +3,16 @@ var moment = require('moment');
 
 module.exports = function(app, passport) {
   app.get('/api/deposits', function(req, res) {
+
+        /* To Handle server re-starts */
+        if(req.user === undefined)
+        {
+          res.redirect('/');
+        }
+        /* To Handle server re-starts */
+
         var query = {userid: req.user._id};
-        console.log(query);
+        //console.log(query);
         // use mongoose to get all deposits in the database
         Deposit.find(query,function(err, deposit) {
 
@@ -19,13 +27,19 @@ module.exports = function(app, passport) {
 
     // create Deposit and send back all deposits after creation
     app.post('/api/deposits', function(req, res) {
+
+      /* To Handle server re-starts */
+      if(req.user === undefined)
+        res.redirect('/');
+        /* To Handle server re-starts */
+
       console.log(req.body);
         if((req.body.oper === 'add') || (req.body.oper === 'edit')){
 
             var fomatted_create_date = moment(req.body.createDate).format('YYYY-MM-DD');
             var fomatted_maturity_date = moment(req.body.maturityDate).format('YYYY-MM-DD');
-            console.log(fomatted_create_date);
-            console.log(fomatted_maturity_date);
+            //console.log(fomatted_create_date);
+            //console.log(fomatted_maturity_date);
             // create a Deposit, information comes from AJAX request from Angular
             var query = { $and: [ { userid: req.user._id }, { number: req.body.number } ]};
             var options = { upsert: 'true' };
@@ -71,7 +85,13 @@ module.exports = function(app, passport) {
 
     // delete a Deposit
     app.post('/api/delDeposits/', function(req, res) {
-        console.log(req.body);
+
+      /* To Handle server re-starts */
+      if(req.user === undefined)
+        res.redirect('/');
+        /* To Handle server re-starts */
+
+        //console.log(req.body);
         Deposit.remove({
             _id : req.params.Deposit_id
         }, function(err, Deposit) {

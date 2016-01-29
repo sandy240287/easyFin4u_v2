@@ -14,13 +14,14 @@ angular.module('easyFin4uApp')
 		function($rootScope, $scope, $http,$location,$timeout) {
 
       var userEmail = $scope.user;
-      console.log(userEmail);
+      //console.log(userEmail);
       if(!userEmail)
         $location.url('/login');
 			else{
+
 				      angular.element(document).ready(function () {
-				        console.log("Inside Document Ready");
-				        $("#list2").jqGrid({
+
+  			        $("#list2").jqGrid({
 				           	url:'/api/userPortfolio',
 				            mtype: "GET",
 				        	  datatype: "json",
@@ -98,6 +99,7 @@ angular.module('easyFin4uApp')
 				        $("#list2").navGrid("#pager2",
 				                        { edit: true, add: true, del: true, search: false, refresh: true, view: false, align: "left" },
                                 { // edit option
+                                    //afterSubmit : renderDistributionGraph,
                                     beforeShowForm: function(form) {
                                       $('#name', form).attr("disabled","true");  //To Disable Edit Box
                                       /* To Centralize Edit Modal */
@@ -115,6 +117,7 @@ angular.module('easyFin4uApp')
                                     }
                                 },
                                 { // add option
+                                  //afterSubmit : renderDistributionGraph,
                                   beforeShowForm: function(form) {
                                     $('#name', form).attr("disabled","true");  //To Disable Edit Box
                                     /* To Centralize Edit Modal */
@@ -160,13 +163,18 @@ angular.module('easyFin4uApp')
                 tooltipFontSize: 10
               };
 
-              $http.get("/api/getDistributionData").then(function(response) {
+              function renderDistributionGraph(){
+                $http.get("/api/getDistributionData").then(function(response) {
                   //console.log(response);
                   $scope.pielabels = response.data.label;
                   $scope.piedata = response.data.data;
-              });
+                });
+              }
+              // TODO - Dynamic Refresh of Distriution of addition in JQGrid
+              renderDistributionGraph();
 
 					 }
+
 
 					 $rootScope.logout = function(){
 						 	$rootScope.user = undefined;

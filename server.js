@@ -42,7 +42,7 @@ app.use(flash()); // use connect-flash for flash messages stored in session
 // routes ======================================================================
 require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 require('./app/depositRoute.js')(app, passport); // load our routes and pass in our app and fully configured passport
-require('./app/portfolioRoute.js')(app); // load our routes and pass in our app and fully configured passport
+require('./app/portfolioRoute.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 //Cron Scheduler for Reminder Service Starts - Runs everyday at 3 AM
 var reminderService = require('./app/reminderService.js');

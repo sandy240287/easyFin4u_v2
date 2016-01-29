@@ -17,7 +17,8 @@
     "underscore": "~1.5.2",
     "angular-strap": "2.3.7",
     "moment": "2.11.1",
-    "angular-chart.js": "~0.8.8"
+    "angular-chart.js": "~0.8.8",
+    "intro.js": "^1.1.1"
   },
   "version": "1.0.0"
 }
