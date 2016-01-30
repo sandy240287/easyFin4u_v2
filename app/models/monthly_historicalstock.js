@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 //var encrypt = require('mongoose-encryption');
 //var secret = "hardToCrack@101";
 
-var historicalstock = new mongoose.Schema({
+var monthly_historicalstock = new mongoose.Schema({
   symbol : String,
   date : String,
   day_high: String,
@@ -14,4 +14,4 @@ var historicalstock = new mongoose.Schema({
 
 //depositSchema.plugin(encrypt, { secret: secret });
 
-module.exports = mongoose.model('historicalstock',historicalstock);
+module.exports = mongoose.model('monthly_historicalstock',monthly_historicalstock);

@@ -1,5 +1,8 @@
 var userPortfolio= require('./models/userPortfolio');
 var userPortfolio2 = require('./models/userPortfolio');
+var historicalstock = require('./models/historicalstock');
+var monthly_historicalstock = require('./models/monthly_historicalstock');
+var weekly_historicalstock = require('./models/weekly_historicalstock');
 var moment = require('moment');
 const http = require('http');
 const apiHttp = require('http');
@@ -139,6 +142,294 @@ module.exports = function(app,passport) {
         });
       });
 
+      // Provides Data for 1 year and more (in months)
+      app.get('/api/getMonthlyPerformanceData', function(req, res) {
+
+        var period = req.query.period;
+        //var period = 9;
+        //var userQuery = {userid: req.user._id};
+        var userQuery = {userid: "56a1580276bee8ddc9295706"};
+        var d = new Date();
+        var performanceLabel = [];
+        var performanceSeries = [];
+        var performanceData = [];
+        var completeData = {};
+        var fomatted_date = moment(d).format('YYYY-MM-DD');
+        var fomatted_month = moment(d).format('YYYY-MM');
+        var fomatted_year = moment(d).format('YYYY');
+
+        async.waterfall([
+            function getUserData(done){
+                var q1 = { $and: [] };
+                var q2 = { $or: [] };
+                var q3 = { $or: [] };
+                for(var i=0;i<=period;i++){
+                  fomatted_month = moment(d).subtract(i, 'months').format('YYYY-MM');
+                  var reg = new RegExp(fomatted_month,"i");
+                  q2.$or.push({date: reg});
+              }
+                //console.log(q2);
+                userPortfolio2.find(userQuery,function(err, userPortfolios) {
+                  // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                  if (err){
+                    console.log("Error:"+ err);
+                    res.send(err);
+                  }
+                  for (porData in userPortfolios){
+                    q3.$or.push({symbol: userPortfolios[porData].symbol});
+                  }
+                  //console.log(q3);
+                  q1.$and.push(q2);
+                  q1.$and.push(q3);
+
+                  done(null,q1);
+                });
+            },function getMonthlyData(q1,done){
+                      //var test = {symbol: 'GOOG'};
+                      //console.log(q1);
+                      monthly_historicalstock.find(q1,function(err, stockValues) {
+                          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                          if (err){
+                            console.log("Error:"+ err);
+                            res.send(err);
+                          }
+                          //console.log(JSON.stringify(stockValues));
+
+                          for (stockValue in stockValues){
+                            performanceData.push(stockValues[stockValue].day_end_adjusted);
+                            performanceSeries.push(stockValues[stockValue].symbol);
+                            performanceLabel.push(stockValues[stockValue].date);
+                          }
+                          //console.log(JSON.stringify(totalStockQty));
+                          // for (porData in userPortfolios){
+                          //   distributionLabel.push(userPortfolios[porData].name);
+                          //   //Convert Share Distribution to Percent
+                          //   percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
+                          //   distributionData.push(percentShare);
+                          // }
+                          performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
+                              return performanceLabel.indexOf(elem) == pos;
+                          });
+
+                          performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
+                              return performanceSeries.indexOf(elem) == pos;
+                          });
+
+                          // TODO: Reverse arrays all
+                          performanceLabelUnique = performanceLabelUnique.reverse();
+                          performanceSeriesUnique = performanceSeriesUnique.reverse();
+                          performanceData = performanceData.reverse();
+
+                          var performanceDataSpliced = [], size = performanceLabelUnique.length;
+
+                          while (performanceData.length > 0)
+                                performanceDataSpliced.push(performanceData.splice(0, size));
+
+                          //console.log(performanceDataSpliced);
+
+                          completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
+                          //console.log(JSON.stringify(completeData));
+                          res.json(completeData);
+                      });
+              }],function(err){
+                if (err)
+                  console.log("ERROR"+err);
+              });
+
+      });
+
+      // Provides Data for 2 Months, 3 months ,6 months (in weeks)
+      app.get('/api/getWeeklyPerformanceData', function(req, res) {
+
+        var period = req.query.period;  // Period shall come in multiple of 4. (4,8,12)
+        period = (period/4)-1;  //Converting the Weeks to months duration
+        //var period = 9;
+        //var userQuery = {userid: req.user._id};
+        var userQuery = {userid: "56a1580276bee8ddc9295706"};
+        var d = new Date();
+        var performanceLabel = [];
+        var performanceSeries = [];
+        var performanceData = [];
+        var completeData = {};
+        var fomatted_date = moment(d).format('YYYY-MM-DD');
+        var fomatted_month = moment(d).format('YYYY-MM');
+        var fomatted_year = moment(d).format('YYYY');
+
+        async.waterfall([
+            function getUserData(done){
+                var q1 = { $and: [] };
+                var q2 = { $or: [] };
+                var q3 = { $or: [] };
+                for(var i=0;i<=period;i++){
+                  fomatted_month = moment(d).subtract(i, 'months').format('YYYY-MM');
+                  var reg = new RegExp(fomatted_month,"i");
+                  q2.$or.push({date: reg});
+              }
+                //console.log(q2);
+                userPortfolio2.find(userQuery,function(err, userPortfolios) {
+                  // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                  if (err){
+                    console.log("Error:"+ err);
+                    res.send(err);
+                  }
+                  for (porData in userPortfolios){
+                    q3.$or.push({symbol: userPortfolios[porData].symbol});
+                  }
+                  //console.log(q3);
+                  q1.$and.push(q2);
+                  q1.$and.push(q3);
+
+                  done(null,q1);
+                });
+            },function getMonthlyData(q1,done){
+                      //var test = {symbol: 'GOOG'};
+                      //console.log(q1);
+                      weekly_historicalstock.find(q1,function(err, stockValues) {
+                          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                          if (err){
+                            console.log("Error:"+ err);
+                            res.send(err);
+                          }
+                          //console.log(JSON.stringify(stockValues));
+
+                          for (stockValue in stockValues){
+                            performanceData.push(stockValues[stockValue].day_end_adjusted);
+                            performanceSeries.push(stockValues[stockValue].symbol);
+                            performanceLabel.push(stockValues[stockValue].date);
+                          }
+                          //console.log(JSON.stringify(totalStockQty));
+                          // for (porData in userPortfolios){
+                          //   distributionLabel.push(userPortfolios[porData].name);
+                          //   //Convert Share Distribution to Percent
+                          //   percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
+                          //   distributionData.push(percentShare);
+                          // }
+                          performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
+                              return performanceLabel.indexOf(elem) == pos;
+                          });
+
+                          performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
+                              return performanceSeries.indexOf(elem) == pos;
+                          });
+
+                          // TODO: Reverse arrays all
+                          performanceLabelUnique = performanceLabelUnique.reverse();
+                          performanceSeriesUnique = performanceSeriesUnique.reverse();
+                          performanceData = performanceData.reverse();
+
+                          var performanceDataSpliced = [], size = performanceLabelUnique.length;
+
+                          while (performanceData.length > 0)
+                                performanceDataSpliced.push(performanceData.splice(0, size));
+
+                          //console.log(performanceDataSpliced);
+
+                          completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
+                          //console.log(JSON.stringify(completeData));
+                          res.json(completeData);
+                      });
+              }],function(err){
+                if (err)
+                  console.log("ERROR"+err);
+              });
+
+      });
+
+      // Provides Data for 2 weeks and 1 month (in days)
+      app.get('/api/getDailyPerformanceData', function(req, res) {
+
+        var period = req.query.period;
+        //var period = 9;
+        //var userQuery = {userid: req.user._id};
+        var userQuery = {userid: "56a1580276bee8ddc9295706"};
+        var d = new Date();
+        var performanceLabel = [];
+        var performanceSeries = [];
+        var performanceData = [];
+        var completeData = {};
+        var fomatted_date = moment(d).format('YYYY-MM-DD');
+        var fomatted_month = moment(d).format('YYYY-MM');
+        var fomatted_year = moment(d).format('YYYY');
+
+        async.waterfall([
+            function getUserData(done){
+                var q1 = { $and: [] };
+                var q2 = { $or: [] };
+                var q3 = { $or: [] };
+                for(var i=0;i<=period;i++){
+                  fomatted_date = moment(d).subtract(i, 'days').format('YYYY-MM-DD');
+                  var reg = new RegExp(fomatted_date,"i");
+                  q2.$or.push({date: reg});
+              }
+                //console.log(q2);
+                userPortfolio2.find(userQuery,function(err, userPortfolios) {
+                  // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                  if (err){
+                    console.log("Error:"+ err);
+                    res.send(err);
+                  }
+                  for (porData in userPortfolios){
+                    q3.$or.push({symbol: userPortfolios[porData].symbol});
+                  }
+                  //console.log(q3);
+                  q1.$and.push(q2);
+                  q1.$and.push(q3);
+
+                  done(null,q1);
+                });
+            },function getData(q1,done){
+                      //var test = {symbol: 'GOOG'};
+                      //console.log(q1);
+                      historicalstock.find(q1,function(err, stockValues) {
+                          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                          if (err){
+                            console.log("Error:"+ err);
+                            res.send(err);
+                          }
+                          //console.log(JSON.stringify(stockValues));
+
+                          for (stockValue in stockValues){
+                            performanceData.push(stockValues[stockValue].day_end_adjusted);
+                            performanceSeries.push(stockValues[stockValue].symbol);
+                            performanceLabel.push(stockValues[stockValue].date);
+                          }
+                          //console.log(JSON.stringify(totalStockQty));
+                          // for (porData in userPortfolios){
+                          //   distributionLabel.push(userPortfolios[porData].name);
+                          //   //Convert Share Distribution to Percent
+                          //   percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
+                          //   distributionData.push(percentShare);
+                          // }
+                          performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
+                              return performanceLabel.indexOf(elem) == pos;
+                          });
+
+                          performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
+                              return performanceSeries.indexOf(elem) == pos;
+                          });
+
+                          // TODO: Reverse arrays all
+                          performanceLabelUnique = performanceLabelUnique.reverse();
+                          performanceSeriesUnique = performanceSeriesUnique.reverse();
+                          performanceData = performanceData.reverse();
+
+                          var performanceDataSpliced = [], size = performanceLabelUnique.length;
+
+                          while (performanceData.length > 0)
+                                performanceDataSpliced.push(performanceData.splice(0, size));
+
+                          //console.log(performanceDataSpliced);
+
+                          completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
+                          //console.log(JSON.stringify(completeData));
+                          res.json(completeData);
+                      });
+              }],function(err){
+                if (err)
+                  console.log("ERROR"+err);
+              });
+
+      });
 
 
 var getUserPortfolioData = function(req,res,done){

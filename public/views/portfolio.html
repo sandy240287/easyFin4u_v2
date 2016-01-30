@@ -8,6 +8,39 @@
     text-align:left;
   }
 
+  ul.list-group:after {
+  clear: both;
+  display: block;
+  content: "";
+  }
+
+  .list-group-item {
+      float: left;
+      border: 1px #F5F5F5;
+      background-color : #F5F5F5;
+      padding :5px 5px;
+  }
+
+  #sitefooter ul {
+      list-style: none;
+      padding: 0;
+  }
+  #sitefooter li:before {
+      position: relative;
+      top: 1px;
+      display: inline-block;
+      font-family: 'Glyphicons Halflings';
+      font-style: normal;
+      font-weight: normal;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 0 5px;
+      content: "\e114";
+      color: #F8B74C;
+      font-size: 10px;
+  }
+
 </style>
 <div class="container" ng-controller="portfolioController">
 
@@ -41,7 +74,17 @@
         <div class="col-sm-6">
             <div class="well">
                 <h3><i class="fa fa-line-chart"></i> Portfolio Performance</h3>
-
+                  <div id="sitefooter">
+                    <ul class="list-group" id="periodSelector">
+                      <li class="list-group-item"><a href="" ng-click="daysData('14')" >2wk</a></li>
+                      <li class="list-group-item"><a href="" ng-click="daysData('30')">1m</a></li>
+                      <li class="list-group-item"><a href="" ng-click="weeksData('8')">2m</a></li>
+                      <li class="list-group-item"><a href="" ng-click="weeksData('12')">3m</a></li>
+                      <li class="list-group-item"><a href="" ng-click="weeksData('24')">6m</a></li>
+                      <li class="list-group-item"><a href="" ng-click="monthsData('12')">1y</a></li>
+                      <li class="list-group-item"><a href="" ng-click="all()">max</a></li>
+                    </ul>
+                  </div>
                     <p>
                       <canvas id="line" class="chart chart-line" chart-data="linedata" chart-labels="linelabels"
     chart-legend="legend" chart-series="lineseries" chart-click="onClick" ></canvas>

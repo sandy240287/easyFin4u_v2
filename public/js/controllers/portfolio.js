@@ -138,23 +138,78 @@ angular.module('easyFin4uApp')
                       				    );
 				     });
 
-						 	$scope.linelabels = ["January", "February", "March", "April", "May", "June", "July"];
-						 	$scope.lineseries = ['Series A', 'Series B'];
-						 	$scope.linedata = [
-						 		[65, 59, 80, 81, 56, 55, 40],
-						 		[28, 48, 40, 19, 86, 27, 90]
-						 	];
-						 	$scope.onClick = function (points, evt) {
-						 		console.log(points, evt);
-						 	};
+						 	//$scope.onClick = function (points, evt) {
+						 	//	console.log(points, evt);
+						 	//};
 
 						 	// Simulate async data update
-						 	$timeout(function () {
-						 		$scope.data = [
-						 			[28, 48, 40, 19, 86, 27, 90],
-						 			[65, 59, 80, 81, 56, 55, 40]
-						 		];
-						 	}, 3000);
+						 	//$timeout(function () {
+						 	//	$scope.data = [
+						 	//		[28, 48, 40, 19, 86, 27, 90],
+						 	//		[65, 59, 80, 81, 56, 55, 40]
+						 	//	];
+						 	//}, 3000);
+
+              var performanceChartUrl = "/api/getDailyPerformanceData?period="+6;
+              $http.get(performanceChartUrl).then(function(response) {
+                //console.log(response);
+                $scope.linelabels = response.data.label;
+                $scope.linedata = response.data.data;
+                $scope.lineseries = response.data.series;
+
+              });
+              //Currently being used for 2 weeks(14 days) and 1 month(30 days)
+              $scope.daysData = function(period) {
+                if(period === undefined)
+                  period = 14; //Default is 14 days
+                var performanceChartUrl = "/api/getDailyPerformanceData?period="+period;
+                $http.get(performanceChartUrl).then(function(response) {
+                  //console.log(response);
+                  $scope.linelabels = response.data.label;
+                  $scope.linedata = response.data.data;
+                  $scope.lineseries = response.data.series;
+
+                });
+              }
+              //Currently being used for 2 months(8 weeks), 3 months(12 weeks) and 6 months(24 weeks)
+              $scope.weeksData = function(period) {
+                if(period === undefined)
+                  period = 4;  // Default is 4 weeks
+                var performanceChartUrl = "/api/getWeeklyPerformanceData?period="+period;
+                $http.get(performanceChartUrl).then(function(response) {
+                  //console.log(response);
+                  $scope.linelabels = response.data.label;
+                  $scope.linedata = response.data.data;
+                  $scope.lineseries = response.data.series;
+
+                });
+              }
+
+              $scope.monthsData = function(period) {
+                if(period === undefined)
+                  period = 12;  //Default is 12 months
+                var performanceChartUrl = "/api/getMonthlyPerformanceData?period="+period;
+                $http.get(performanceChartUrl).then(function(response) {
+                  //console.log(response);
+                  $scope.linelabels = response.data.label;
+                  $scope.linedata = response.data.data;
+                  $scope.lineseries = response.data.series;
+
+                });
+              }
+
+
+
+              $scope.all = function() {
+                var performanceChartUrl = "/api/getPerformanceData?period="+5;
+                $http.get(performanceChartUrl).then(function(response) {
+                  //console.log(response);
+                  $scope.linelabels = response.data.label;
+                  $scope.linedata = response.data.data;
+                  $scope.lineseries = response.data.series;
+
+                });
+              }
 
               $scope.pieOptions = {
                 animationEasing : "easeOutBounce",
