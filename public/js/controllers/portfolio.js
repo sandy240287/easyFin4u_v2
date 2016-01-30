@@ -19,6 +19,12 @@ angular.module('easyFin4uApp')
         $location.url('/login');
 			else{
 
+             $(window).on("resize", function () {
+              var $grid = $("#list2"),
+                  newWidth = $grid.closest(".ui-jqgrid").parent().width();
+              $grid.jqGrid("setGridWidth", newWidth, true);
+              });
+
 				      angular.element(document).ready(function () {
 
   			        $("#list2").jqGrid({
@@ -136,6 +142,10 @@ angular.module('easyFin4uApp')
                                 },
                       				  { closeAfterEdit: true , closeAfterAdd: true }
                       				    );
+
+                          var $grid = $("#list2"),
+                          newWidth = $grid.closest(".ui-jqgrid").parent().width();
+                          $grid.jqGrid("setGridWidth", newWidth, true);
 				     });
 
 						 	//$scope.onClick = function (points, evt) {

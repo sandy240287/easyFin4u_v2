@@ -64,6 +64,7 @@ module.exports = function(passport) {
                 // set the user's local credentials
                 newUser.local.email    = email;
                 newUser.local.password = newUser.generateHash(password);
+                newUser.local.firstLogin = true;
 
                 // save the user
                 newUser.save(function(err) {
@@ -108,7 +109,15 @@ module.exports = function(passport) {
                 return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.')); // create the loginMessage and save it to session as flashdata
 
             // all is well, return successful user
-            return done(null, user);
+            var user1 = new User(user);
+            user.local.firstLogin = false;
+            user.save(function(err) {
+                if(err){
+                  console.log("Error updating FirstLogin: "+err);
+                }
+            });
+            //console.log(JSON.stringify(user1));
+            return done(null, user1);
         });
 
     }));

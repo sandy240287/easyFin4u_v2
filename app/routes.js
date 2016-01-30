@@ -30,7 +30,7 @@ module.exports = function(app, passport) {
     app.post('/login', passport.authenticate('local-login', {
             failureFlash : true // allow flash messages
           }),function(req, res) {
-            console.log("Inside Response");
+            //console.log("Inside Response");
               res.send({
                 user : req.user,
                 message: req.flash('loginMessage')

@@ -5,11 +5,18 @@ angular.module('easyFin4uApp')
 		function($rootScope, $scope, $http,$location) {
 
       var userEmail = $scope.user;
+			var firstLogin = $scope.user.local.firstLogin;
       console.log(userEmail);
       if(!userEmail)
         $location.url('/login');
 			else{
 				      angular.element(document).ready(function () {
+
+								$(window).on("resize", function () {
+	               var $grid = $("#list2"),
+	                   newWidth = $grid.closest(".ui-jqgrid").parent().width();
+	               $grid.jqGrid("setGridWidth", newWidth, true);
+	               });
 
 				        //console.log("Inside Document Ready");
 				        $("#list2").jqGrid({
@@ -106,7 +113,9 @@ angular.module('easyFin4uApp')
 														intro.setOptions({
 														            steps: [
 														              {
-														                intro: "Hello world!"
+														                intro: "Welcome to Easy Finance Manager - Your tool to personalized portfolio" +
+																										" and deposit management. You can see the real time market stats of your "+
+																										"investment."
 														              },
 														              {
 														                element: document.querySelector('#portfolioTab'),
@@ -119,15 +128,22 @@ angular.module('easyFin4uApp')
 														              {
 														                element: document.querySelector('#depositTable'),
 														                intro: "Enter the Deposit Details using the '+' button on the bottom left of the table. Edit the details by selecting the row and selecting the Pencil button on the bottom bar.",
-														                position: 'left'
+														                position: 'center'
 														              }
 														            ],
 																				showStepNumbers:false
 														          });
-														intro.start();
+														if(firstLogin === "true"){
+															intro.start();
+															$scope.user.local.firstLogin = "false";
+														}
 														intro.oncomplete(function() {
 														  $('.introjs-overlay').hide();
 														});
+
+														var $grid = $("#list2"),
+	                          newWidth = $grid.closest(".ui-jqgrid").parent().width();
+	                          $grid.jqGrid("setGridWidth", newWidth, true);
 				     });
 					 }
 
