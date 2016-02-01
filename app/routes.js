@@ -11,7 +11,7 @@ module.exports = function(app, passport) {
     // =====================================
     // HOME PAGE (with login links) ========
     // =====================================
-//Commented to Angular Implementation
+    //Commented to Angular Implementation
     // app.get('/', function(req, res) {
     //     res.render('index.ejs'); // load the index.ejs file
     // });
@@ -36,6 +36,26 @@ module.exports = function(app, passport) {
                 message: req.flash('loginMessage')
               });
           });
+
+      // =====================================
+      // FACEBOOK ROUTES =====================
+      // =====================================
+      // route for facebook authentication and login
+      app.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+
+      // handle the callback after facebook has authenticated the user
+      app.get('/auth/facebook/callback',
+          passport.authenticate('facebook', {
+              //successRedirect : '/profile',
+              //failureRedirect : '/'
+          }),function(req, res) {
+            //console.log("Inside Response");
+              res.send({
+                user : req.user,
+                message: req.flash('loginMessage')
+              });
+          });
+
 
     // =====================================
     // SIGNUP ==============================

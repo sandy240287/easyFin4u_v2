@@ -10,8 +10,7 @@ angular.module('easyFin4uApp', ['chart.js','ngCookies', 'ngResource', 'ngMessage
     .when('/login', {
       templateUrl: 'views/login.html',
       controller: 'loginController'
-    })
-    .when('/signup', {
+    }).when('/signup', {
       templateUrl: 'views/signup.html',
       controller: 'signupController'
     })

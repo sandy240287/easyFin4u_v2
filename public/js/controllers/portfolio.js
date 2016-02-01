@@ -14,6 +14,8 @@ angular.module('easyFin4uApp')
 		function($rootScope, $scope, $http,$location,$timeout) {
 
       var userEmail = $scope.user;
+      var pielabels1 ="";
+      var piedata1 = "";
       //console.log(userEmail);
       if(!userEmail)
         $location.url('/login');
@@ -103,9 +105,19 @@ angular.module('easyFin4uApp')
 				        });
 
 				        $("#list2").navGrid("#pager2",
-				                        { edit: true, add: true, del: true, search: false, refresh: true, view: false, align: "left" },
+				                        { edit: true, add: true, del: true, search: false, refresh: true,
+                                   view: false, align: "left"},
                                 { // edit option
-                                    //afterSubmit : renderDistributionGraph,
+                                  closeAfterEdit: true ,
+                                  reloadAfterSubmit:false,
+                                  afterComplete: function (result) {
+                                                    success: {
+                                                      //alert(result.responseText);
+                                                      renderDistributionGraph();
+
+                                                    }
+                                                    fail: { console.log(result.responseText); }
+                                                },
                                     beforeShowForm: function(form) {
                                       $('#name', form).attr("disabled","true");  //To Disable Edit Box
                                       /* To Centralize Edit Modal */
@@ -123,7 +135,16 @@ angular.module('easyFin4uApp')
                                     }
                                 },
                                 { // add option
-                                  //afterSubmit : renderDistributionGraph,
+                                  closeAfterAdd: true ,
+                                  reloadAfterSubmit:false,
+                                  afterComplete: function (result) {
+                                                    success: {
+                                                      //alert(result.responseText);
+                                                      renderDistributionGraph();
+                                                      renderPerformanceGraph();
+                                                    }
+                                                    fail: { console.log(result.responseText); }
+                                                },
                                   beforeShowForm: function(form) {
                                     $('#name', form).attr("disabled","true");  //To Disable Edit Box
                                     /* To Centralize Edit Modal */
@@ -139,9 +160,18 @@ angular.module('easyFin4uApp')
                                     dlgDiv[0].style.left = Math.round((parentWidth-dlgWidth)/2) + "px";
                                     /* To Centralize Edit Modal */
                                   }
-                                },
-                      				  { closeAfterEdit: true , closeAfterAdd: true }
-                      				    );
+                                },{
+                                  reloadAfterSubmit:false,
+                                  afterComplete: function (result) {
+                                                    success: {
+                                                      //alert(result.responseText);
+                                                      renderDistributionGraph();
+                                                      renderPerformanceGraph();
+                                                    }
+                                                    fail: { console.log(result.responseText); }
+                                                }
+                                }
+                                );
 
                           var $grid = $("#list2"),
                           newWidth = $grid.closest(".ui-jqgrid").parent().width();
@@ -160,14 +190,19 @@ angular.module('easyFin4uApp')
 						 	//	];
 						 	//}, 3000);
 
-              var performanceChartUrl = "/api/getDailyPerformanceData?period="+6;
-              $http.get(performanceChartUrl).then(function(response) {
-                //console.log(response);
-                $scope.linelabels = response.data.label;
-                $scope.linedata = response.data.data;
-                $scope.lineseries = response.data.series;
+              renderPerformanceGraph();
 
-              });
+              function renderPerformanceGraph(){
+                var performanceChartUrl = "/api/getDailyPerformanceData?period="+6;
+                $http.get(performanceChartUrl).then(function(response) {
+                  console.log(response);
+                  $rootScope.linelabels = response.data.label;
+                  $rootScope.linedata = response.data.data;
+                  $rootScope.lineseries = response.data.series;
+
+                });
+              }
+
               //Currently being used for 2 weeks(14 days) and 1 month(30 days)
               $scope.daysData = function(period) {
                 if(period === undefined)
@@ -208,8 +243,6 @@ angular.module('easyFin4uApp')
                 });
               }
 
-
-
               $scope.all = function() {
                 var performanceChartUrl = "/api/getPerformanceData?period="+5;
                 $http.get(performanceChartUrl).then(function(response) {
@@ -230,16 +263,16 @@ angular.module('easyFin4uApp')
 
               function renderDistributionGraph(){
                 $http.get("/api/getDistributionData").then(function(response) {
-                  //console.log(response);
-                  $scope.pielabels = response.data.label;
-                  $scope.piedata = response.data.data;
+
+                  $rootScope.pielabels = response.data.label;
+                  $rootScope.piedata = response.data.data;
+
                 });
               }
-              // TODO - Dynamic Refresh of Distriution of addition in JQGrid
+
               renderDistributionGraph();
 
 					 }
-
 
 					 $rootScope.logout = function(){
 						 	$rootScope.user = undefined;

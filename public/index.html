@@ -27,19 +27,21 @@
 </head>
 <body>
 	<div class="navbar navbar-default navbar-static-top"
-	     role="navigation" bs-navbar>
+	     role="navigation" bs-navbar ng-controller="mainController">
 	  <div class="navbar-header">
 	    <a class="navbar-brand" href="/">
 	      <span class="glyphicon glypghicon-film"></span>
 	      Easy Finance <strong>Manager</strong></a>
 	  </div>
 	  <ul class="nav navbar-nav">
+      <li id="depositTab" data-match-route="/fdDetails"><a href="/fdDetails">Deposit</a></li>
 	    <li id="portfolioTab" data-match-route="/portfolio"><a href="/portfolio">Portfolio</a></li>
-	    <li id="depositTab" data-match-route="/fdDetails"><a href="/fdDetails">Deposit</a></li>
 	  </ul>
-	  <ul class="nav navbar-nav pull-right" ng-if="currentUser">
-	    <li class="navbar-text" ng-bind="currentUser.email"></li>
-	    <li><a href="javascript:void(0)" ng-click="logout()">Logout</a></li>
+	  <ul class="nav navbar-nav pull-right" ng-if='user !== undefined'>
+	    <!-- <li class="navbar-text" ng-bind="user.local.email"></li>
+	    <li><a href="javascript:void(0)" ng-click="logout()">Logout</a></li> -->
+      <strong>User Profile</strong>: (<a href="/profile" ng-bind="user.local.email"></a>)
+      <a href="/" ng-click="logout()" class="btn btn-default btn-sm">Logout</a>
 	  </ul>
 	</div>
 
@@ -61,6 +63,7 @@
 <script src="./js/services/loginServices.js"></script>
 <script src="./js/controllers/main.js"></script>
 <script src="./js/controllers/login.js"></script>
+<script src="./js/controllers/socialLogin.js"></script>
 <script src="./js/controllers/fdDetails.js"></script>
 <script src="./js/controllers/signup.js"></script>
 <script src="./js/controllers/profile.js"></script>

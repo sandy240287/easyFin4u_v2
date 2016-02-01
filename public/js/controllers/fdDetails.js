@@ -5,11 +5,11 @@ angular.module('easyFin4uApp')
 		function($rootScope, $scope, $http,$location) {
 
       var userEmail = $scope.user;
-			var firstLogin = $scope.user.local.firstLogin;
-      console.log(userEmail);
+      //console.log(userEmail);
       if(!userEmail)
         $location.url('/login');
 			else{
+							var firstLogin = $scope.user.local.firstLogin;
 				      angular.element(document).ready(function () {
 
 								$(window).on("resize", function () {
