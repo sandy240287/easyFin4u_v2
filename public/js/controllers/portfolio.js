@@ -190,12 +190,15 @@ angular.module('easyFin4uApp')
 						 	//	];
 						 	//}, 3000);
 
+              $scope.perfDataLoaded = false;
+
               renderPerformanceGraph();
 
               function renderPerformanceGraph(){
                 var performanceChartUrl = "/api/getDailyPerformanceData?period="+14;
                 $http.get(performanceChartUrl).then(function(response) {
-                  console.log(response);
+                  //console.log(response);
+                  $scope.dataLoaded = true;
                   $rootScope.linelabels = response.data.label;
                   $rootScope.linedata = response.data.data;
                   $rootScope.lineseries = response.data.series;
@@ -210,6 +213,7 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getDailyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
+                  $scope.dataLoaded = true;
                   $scope.linelabels = response.data.label;
                   $scope.linedata = response.data.data;
                   $scope.lineseries = response.data.series;
@@ -223,6 +227,7 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getWeeklyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
+                  $scope.dataLoaded = true;
                   $scope.linelabels = response.data.label;
                   $scope.linedata = response.data.data;
                   $scope.lineseries = response.data.series;
@@ -236,6 +241,7 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getMonthlyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
+                  $scope.dataLoaded = true;
                   $scope.linelabels = response.data.label;
                   $scope.linedata = response.data.data;
                   $scope.lineseries = response.data.series;
@@ -247,6 +253,7 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getPerformanceData?period="+5;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
+                  $scope.dataLoaded = true;
                   $scope.linelabels = response.data.label;
                   $scope.linedata = response.data.data;
                   $scope.lineseries = response.data.series;

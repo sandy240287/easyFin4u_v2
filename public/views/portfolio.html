@@ -86,9 +86,11 @@
                     </ul>
                   </div>
                     <p>
-                      <canvas id="line" class="chart chart-line" chart-data="linedata" chart-labels="linelabels"
+                      <p class="text-center" ng-hide="dataLoaded">
+                          <i class="fa fa-4x fa-spinner fa-spin"></i>
+                      </p>
+                      <canvas ng-show="dataLoaded" id="line" class="chart chart-line" chart-data="linedata" chart-labels="linelabels"
                             chart-legend="legend" chart-series="lineseries" chart-click="onClick" >
-                      No data to display right now.
                       </canvas>
                     </p>
 
