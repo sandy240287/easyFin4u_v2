@@ -11,28 +11,32 @@ var userSchema = mongoose.Schema({
         password     : String,
         resetPasswordToken: String,
         resetPasswordExpires: Date,
-        firstLogin : String
+        firstLogin : String,
+        tncStatus : String
     },
     facebook         : {
         id           : String,
         token        : String,
         email        : String,
         name         : String,
-        firstLogin : String
+        firstLogin : String,
+        tncStatus : String
     },
     twitter          : {
         id           : String,
         token        : String,
         displayName  : String,
         username     : String,
-        firstLogin : String
+        firstLogin : String,
+        tncStatus : String
     },
     google           : {
         id           : String,
         token        : String,
         email        : String,
         name         : String,
-        firstLogin : String
+        firstLogin : String,
+        tncStatus : String
     }
 
 });

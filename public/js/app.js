@@ -29,6 +29,9 @@ angular.module('easyFin4uApp', ['chart.js','ngCookies', 'ngResource', 'ngMessage
     .when('/portfolio', {
       templateUrl: 'views/portfolio.html',
       controller: 'portfolioController'
+    }).when('/terms', {
+      templateUrl: 'views/terms.html',
+      controller: 'tncController'
     })
     .otherwise({
       redirectTo: '/'

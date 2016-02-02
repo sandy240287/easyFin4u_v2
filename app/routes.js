@@ -227,8 +227,44 @@ module.exports = function(app, passport) {
           });
         });
 
+        app.get('/terms', function(req, res) {
+          res.redirect('/');
+        });
 
 
+        app.get('/api/acceptStatus', function(req, res) {
+          User.findOne({ '_id': req.user._id}, function(err, user) {
+            if (!user) {
+              res.send({
+                user : "false",
+                message: "false"
+              });
+            }
+            //console.log("Sending user:"+user);
+            res.send({
+              user : user,
+              message: req.flash('loginMessage')
+            });
+          });
+        });
+
+        app.post('/api/acceptTnc', function(req, res) {
+                //console.log(req.body)
+                var query = {_id: req.body.user._id};
+                var options = { upsert: 'true' };
+                //console.log(query)
+                User.findOneAndUpdate(query, { $set: {
+                    'local.tncStatus' : req.body.status,
+                }}, options, function(err, user) {
+                  //console.log(JSON.stringify(user));
+                    if (err){
+                        console.log("Error:" + err);
+                        res.send(err);
+                      }else{
+                      res.json(user);
+                    }
+                });
+        });
 
 };
 

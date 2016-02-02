@@ -193,7 +193,7 @@ angular.module('easyFin4uApp')
               renderPerformanceGraph();
 
               function renderPerformanceGraph(){
-                var performanceChartUrl = "/api/getDailyPerformanceData?period="+6;
+                var performanceChartUrl = "/api/getDailyPerformanceData?period="+14;
                 $http.get(performanceChartUrl).then(function(response) {
                   console.log(response);
                   $rootScope.linelabels = response.data.label;

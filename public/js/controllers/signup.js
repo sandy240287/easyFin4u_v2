@@ -12,16 +12,16 @@ angular.module('easyFin4uApp')
 					// No error: authentication OK
 					console.log('Signup successful!');
 					console.log(user);
-					$rootScope.user = user;
-					$scope.messagePresent = true;
-					$scope.message = 'Signup successful!';
+					$rootScope.user = undefined;
+					$rootScope.messagePresent = true;
+					$rootScope.successMessagePresent = 'Signup successful! Please login using the credentials.';
 					$location.url('/login');
 				})
 				.error(function(err){
 					// Error: authentication failed
 					console.log('Signup failed!');
-					$scope.messagePresent = true;
-					$scope.message = 'Signup failed!';
+					$rootScope.dangerMessagePresent = true;
+					$rootScope.message = 'Signup failed! Please retry.';
 					$location.url('/signup');
 				});
 			};

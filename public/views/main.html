@@ -1,3 +1,58 @@
+<style type='text/css'>
+.jumbotron {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 5px;
+}
+  .jumbotron h1 {
+    font-size: 30px;
+}
+.carousel-control{
+	background: transparent;
+	width: 16px;
+	height: 16px;
+	font-size: 13px;
+	top:50%;
+}
+
+.carousel-control.right{right:-30px;}
+.carousel-control.left{left:-30px;}
+
+.carousel{
+	height: 300px;
+}
+
+.carousel img{
+	max-width: 100%;
+  width:500px;
+  height:300px;
+}
+
+.carousel-caption {
+      background-color: transparent;
+      position: absolute;
+      max-width: 100%;
+      margin-top:10%;
+      left:50%;
+      right:5%;
+
+}
+
+.carousel-caption h1{
+	font-size: 50px;
+	text-transform: capitalize;
+	margin-bottom: 30px;
+	color:#555;
+	font-weight:200;
+}
+.carousel-caption .lead{
+	color: #888;
+	font-size: 18px;
+	line-height: 24px;
+	padding-bottom: 40px;
+	font-weight: 400
+}
+</style>
 <div class="container">
 
     <div class="jumbotron text-center">
@@ -10,4 +65,47 @@
         <!-- <a href="/auth/facebook" class="btn btn-primary"><span class="fa fa-facebook"></span> Facebook</a> -->
     </div>
 
+    <!--Carousel
+==================================================-->
+<div id="myCarousel" class="carousel slide">
+  <div class="carousel-inner">
+    <div class="active item">
+      <div class="container">
+        <div class="row">
+            <div class="span6">
+              <div class="carousel-caption">
+                    <h1>Deposit Manager</h1>
+                    <p class="lead">
+                      Easily manage your deposit in multiple accounts with a simple interface.
+                      Reminder mails will be sent for every maturing deposit.
+                    </p>
+              </div>
+            </div>
+              <div class="span6"> <img src="images/slide/efm_deposit.png"></div>
+        </div>
+      </div>
+  </div>
+    <div class="item">
+      <div class="container">
+        <div class="row">
+            <div class="span6">
+              <div class="carousel-caption">
+                    <h1>Portfolio Manager</h1>
+                    <p class="lead">
+                      Check your Portfolio Performance everyday and for multiple durations.
+                      Currently providing support for Nasdaq, BSE and NSE equities.
+                    </p>
+                    <!-- <a class="btn btn-large btn-primary" href="#">Sign up today</a> -->
+              </div>
+            </div>
+              <div class="span6"> <img src="images/slide/efm_portfolio.png"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+     <!-- Carousel nav -->
+    <a background="black" class="carousel-control left " href="#myCarousel" data-slide="prev"><i class="fa fa-chevron-left"></i></a>
+    <a background="black" class="carousel-control right" href="#myCarousel" data-slide="next"><i class="fa fa-chevron-right"></i></a>
+      <!-- /.Carousel nav -->
+</div>
 </div>

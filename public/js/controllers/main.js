@@ -11,4 +11,11 @@ angular.module('easyFin4uApp')
 			 $http.get('/logout');
 		 };
 
+		$('.carousel').carousel({
+        interval: 3000
+    });
+
+    $('.carousel').carousel('cycle');
+
+
 	}]);

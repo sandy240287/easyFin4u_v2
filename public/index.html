@@ -10,7 +10,7 @@
 	<title>Easy Finance Manager</title>
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-
+  <link rel="stylesheet" href="./stylesheets/bootstrap-responsive.css">
 	<link rel="stylesheet" href="/include/css/ui.jqgrid-bootstrap-ui.css">
 	<link rel="stylesheet" href="/include/css/ui.jqgrid-bootstrap.css">
 	<link rel="stylesheet" href="/include/css/ui.jqgrid.css">
@@ -26,11 +26,12 @@
   <link rel="stylesheet" href="/bower_components/intro.js/introjs.css">
 </head>
 <body>
+<div id="main">
 	<div class="navbar navbar-default navbar-static-top"
 	     role="navigation" bs-navbar ng-controller="mainController">
 	  <div class="navbar-header">
 	    <a class="navbar-brand" href="/">
-	      <span class="glyphicon glypghicon-film"></span>
+	      <i class="fa fa-university"></i>
 	      Easy Finance <strong>Manager</strong></a>
 	  </div>
 	  <ul class="nav navbar-nav">
@@ -45,9 +46,9 @@
 	  </ul>
 	</div>
 
-<div class="topPad" ng-view>
+<div id="wrap" class="topPad" ng-view>
 </div>
-
+<script src="./javascripts/bootstrap.min.js"></script>
 <script src="/bower_components/angular/angular.js"></script>
 <script src="/bower_components/angular-strap/dist/angular-strap.js"></script>
 <script src="/bower_components/angular-strap/dist/angular-strap.tpl.js"></script>
@@ -69,5 +70,31 @@
 <script src="./js/controllers/profile.js"></script>
 <script src="./js/controllers/forgotPassword.js"></script>
 <script src="./js/controllers/portfolio.js"></script>
+<script src="./js/controllers/terms.js"></script>
+</div>
+
+<footer>
+    <div class="container">
+      <div class="row">
+        <div class="span6">Copyright &copy 2016 Easy Finance Manager | All Rights Reserved</div>
+            <div class="social pull-right">
+                <!-- <a href="#"><img src="images/social/googleplus.png" alt=""></a>
+                <a href="#"><img src="images/social/dribbble.png" alt=""></a>
+                <a href="#"><img src="images/social/twitter.png" alt=""></a>
+                <a href="#"><img src="images/social/dribbble.png" alt=""></a>
+                <a href="#"><img src="images/social/rss.png" alt=""></a> -->
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+                ">
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                </form>
+
+            </div>
+      </div>
+    </div>
+</footer>
+
 </body>
 </html>

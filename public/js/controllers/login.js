@@ -4,8 +4,6 @@ angular.module('easyFin4uApp')
 	.controller('loginController', ['$rootScope','$scope','$http','$location' ,'loginServices',
 		function($rootScope, $scope, $http,$location, loginServices) {
 			$scope.formData = {};
-			$scope.messagePresent = false;
-			$scope.loading = true;
 
 			$scope.login = function() {
 				//console.log($scope.formData);
@@ -16,12 +14,27 @@ angular.module('easyFin4uApp')
 					$rootScope.user = response.user;
 					$scope.messagePresent = false;
 					$scope.message = 'Authentication Successful';
-					$location.url('/fdDetails');
+
+					$http.get('/api/acceptStatus', $rootScope.user).success(function(response){
+						console.log(JSON.stringify(response));
+						console.log(JSON.stringify(response.user.local.tncStatus));
+						if(response.user.local.tncStatus == "false"){
+							$location.url('/terms');
+						}else{
+							$rootScope.user = response.user;
+							$rootScope.successMessagePresent = false;
+							$scope.message = 'Login Successful';
+							$location.url('/fdDetails');
+						}
+					}).error(function (response){
+						$location.url('/login');
+					});
+
 				})
 				.error(function(response){
 					// Error: authentication failed
-					$scope.messagePresent = true;
-					$scope.message = 'Authentication failed!';
+					$rootScope.dangerMessagePresent = true;
+					$rootScope.message = 'Authentication failed!';
 					$location.url('/login');
 				});
 			};

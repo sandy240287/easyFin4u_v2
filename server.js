@@ -17,7 +17,7 @@ var database = require('./config/database'); 			// load the database config
 
 // configuration ===============================================================
 mongoose.connect(database.url); 	// connect to mongoDB database on modulus.io
-mongoose.set('debug', true);
+//mongoose.set('debug', true);
 
 require('./config/passport')(passport); // pass passport for configuration
 
