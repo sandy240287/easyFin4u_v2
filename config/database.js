@@ -1,5 +1,5 @@
 module.exports = {
 
 	// the database url to connect
-	url : 'mongodb://localhost:27017/'
+	url : 'mongodb://easyadmin:easyadmin_101@localhost:27017/easyfinDB'
 }
