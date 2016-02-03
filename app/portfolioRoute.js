@@ -193,20 +193,34 @@ module.exports = function(app,passport) {
                             console.log("Error:"+ err);
                             res.send(err);
                           }
-                          //console.log(JSON.stringify(stockValues));
+
+                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                          stockValues.sort(SortByName);
+
+                          var performanceSeriesForCount = [], stockValueSorted = [];
+                          for (stockValue in stockValues){
+                            performanceSeriesForCount.push(stockValues[stockValue].symbol);
+                          }
+                          performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
+                              return performanceSeriesForCount.indexOf(elem) == pos;
+                          });
+
+                          var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
+
+                          for (stockValueDateSort in stockValueSplit){
+                            stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
+                            stockValueSorted.push(stockValueSplit[stockValueDateSort]);
+                          }
+
+                          stockValues = [].concat.apply([], stockValueSorted);
+                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
 
                           for (stockValue in stockValues){
                             performanceData.push(stockValues[stockValue].day_end_adjusted);
                             performanceSeries.push(stockValues[stockValue].symbol);
                             performanceLabel.push(stockValues[stockValue].date);
                           }
-                          //console.log(JSON.stringify(totalStockQty));
-                          // for (porData in userPortfolios){
-                          //   distributionLabel.push(userPortfolios[porData].name);
-                          //   //Convert Share Distribution to Percent
-                          //   percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
-                          //   distributionData.push(percentShare);
-                          // }
+
                           performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
                               return performanceLabel.indexOf(elem) == pos;
                           });
@@ -216,9 +230,9 @@ module.exports = function(app,passport) {
                           });
 
                           // TODO: Reverse arrays all
-                          performanceLabelUnique = performanceLabelUnique.reverse();
-                          performanceSeriesUnique = performanceSeriesUnique.reverse();
-                          performanceData = performanceData.reverse();
+                          // performanceLabelUnique = performanceLabelUnique.reverse();
+                          // performanceSeriesUnique = performanceSeriesUnique.reverse();
+                          // performanceData = performanceData.reverse();
 
                           var performanceDataSpliced = [], size = performanceLabelUnique.length;
 
@@ -290,7 +304,27 @@ module.exports = function(app,passport) {
                             console.log("Error:"+ err);
                             res.send(err);
                           }
-                          //console.log(JSON.stringify(stockValues));
+
+                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                          stockValues.sort(SortByName);
+                          //console.log(stockValues);
+                          var performanceSeriesForCount = [], stockValueSorted = [];
+                          for (stockValue in stockValues){
+                            performanceSeriesForCount.push(stockValues[stockValue].symbol);
+                          }
+                          performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
+                              return performanceSeriesForCount.indexOf(elem) == pos;
+                          });
+
+                          var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
+                          //console.log(stockValueSplit);
+                          for (stockValueDateSort in stockValueSplit){
+                            stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
+                            stockValueSorted.push(stockValueSplit[stockValueDateSort]);
+                          }
+                          //console.log(stockValueSorted);
+                          stockValues = [].concat.apply([], stockValueSorted);
+                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
 
                           for (stockValue in stockValues){
                             performanceData.push(stockValues[stockValue].day_end_adjusted);
@@ -313,9 +347,9 @@ module.exports = function(app,passport) {
                           });
 
                           // TODO: Reverse arrays all
-                          performanceLabelUnique = performanceLabelUnique.reverse();
-                          performanceSeriesUnique = performanceSeriesUnique.reverse();
-                          performanceData = performanceData.reverse();
+                          // performanceLabelUnique = performanceLabelUnique.reverse();
+                          // performanceSeriesUnique = performanceSeriesUnique.reverse();
+                          // performanceData = performanceData.reverse();
 
                           var performanceDataSpliced = [], size = performanceLabelUnique.length;
 
@@ -378,28 +412,41 @@ module.exports = function(app,passport) {
                   done(null,q1);
                 });
             },function getData(q1,done){
-                      //var test = {symbol: 'GOOG'};
-                      //console.log(q1);
-                      historicalstock.find(q1,function(err, stockValues) {
+
+                      historicalstock.find(q1,null,function(err, stockValues) {
                           // if there is an error retrieving, send the error. nothing after res.send(err) will execute
                           if (err){
                             console.log("Error:"+ err);
                             res.send(err);
                           }
-                          //console.log(JSON.stringify(stockValues));
+
+                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                          stockValues.sort(SortByName);
+
+                          var performanceSeriesForCount = [], stockValueSorted = [];
+                          for (stockValue in stockValues){
+                            performanceSeriesForCount.push(stockValues[stockValue].symbol);
+                          }
+                          performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
+                              return performanceSeriesForCount.indexOf(elem) == pos;
+                          });
+
+                          var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
+
+                          for (stockValueDateSort in stockValueSplit){
+                            stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
+                            stockValueSorted.push(stockValueSplit[stockValueDateSort]);
+                          }
+
+                          stockValues = [].concat.apply([], stockValueSorted);
+                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
 
                           for (stockValue in stockValues){
                             performanceData.push(stockValues[stockValue].day_end_adjusted);
                             performanceSeries.push(stockValues[stockValue].symbol);
                             performanceLabel.push(stockValues[stockValue].date);
                           }
-                          //console.log(JSON.stringify(totalStockQty));
-                          // for (porData in userPortfolios){
-                          //   distributionLabel.push(userPortfolios[porData].name);
-                          //   //Convert Share Distribution to Percent
-                          //   percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
-                          //   distributionData.push(percentShare);
-                          // }
+
                           performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
                               return performanceLabel.indexOf(elem) == pos;
                           });
@@ -409,9 +456,9 @@ module.exports = function(app,passport) {
                           });
 
                           // TODO: Reverse arrays all
-                          performanceLabelUnique = performanceLabelUnique.reverse();
-                          performanceSeriesUnique = performanceSeriesUnique.reverse();
-                          performanceData = performanceData.reverse();
+                          // performanceLabelUnique = performanceLabelUnique.reverse();
+                          // performanceSeriesUnique = performanceSeriesUnique.reverse();
+                          // performanceData = performanceData.reverse();
 
                           var performanceDataSpliced = [], size = performanceLabelUnique.length;
 
@@ -430,6 +477,21 @@ module.exports = function(app,passport) {
               });
 
       });
+
+      var createGroupedArray = function(arr, chunkSize) {
+          var groups = [], i;
+          for (i = 0; i < arr.length; i += chunkSize) {
+              groups.push(arr.slice(i, i + chunkSize));
+          }
+          return groups;
+      }
+      function comp(a, b) {
+          return new Date(a.date).getTime() - new Date(b.date).getTime();
+      }
+
+      function SortByName(x,y) {
+        return ((x.symbol == y.symbol) ? 0 : ((x.symbol > y.symbol) ? 1 : -1 ));
+      }
 
 
 var getUserPortfolioData = function(req,res,done){

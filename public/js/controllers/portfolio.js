@@ -220,6 +220,7 @@ angular.module('easyFin4uApp')
 
                 });
               }
+              
               //Currently being used for 2 months(8 weeks), 3 months(12 weeks) and 6 months(24 weeks)
               $scope.weeksData = function(period) {
                 if(period === undefined)
