@@ -198,10 +198,12 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getDailyPerformanceData?period="+14;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
-                  $scope.dataLoaded = true;
-                  $rootScope.linelabels = response.data.label;
-                  $rootScope.linedata = response.data.data;
-                  $rootScope.lineseries = response.data.series;
+                  $timeout(function() {
+                    $scope.dataLoaded = true;
+                    $scope.linelabels = response.data.label;
+                    $scope.linedata = response.data.data;
+                    $scope.lineseries = response.data.series;
+                  });
 
                 });
               }
@@ -213,14 +215,16 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getDailyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
-                  $scope.dataLoaded = true;
-                  $scope.linelabels = response.data.label;
-                  $scope.linedata = response.data.data;
-                  $scope.lineseries = response.data.series;
+                  $timeout(function() {
+                    $scope.dataLoaded = true;
+                    $scope.linelabels = response.data.label;
+                    $scope.linedata = response.data.data;
+                    $scope.lineseries = response.data.series;
+                  });
 
                 });
               }
-              
+
               //Currently being used for 2 months(8 weeks), 3 months(12 weeks) and 6 months(24 weeks)
               $scope.weeksData = function(period) {
                 if(period === undefined)
@@ -228,10 +232,12 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getWeeklyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
-                  $scope.dataLoaded = true;
-                  $scope.linelabels = response.data.label;
-                  $scope.linedata = response.data.data;
-                  $scope.lineseries = response.data.series;
+                  $timeout(function() {
+                    $scope.dataLoaded = true;
+                    $scope.linelabels = response.data.label;
+                    $scope.linedata = response.data.data;
+                    $scope.lineseries = response.data.series;
+                  });
 
                 });
               }
@@ -242,10 +248,12 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getMonthlyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
-                  $scope.dataLoaded = true;
-                  $scope.linelabels = response.data.label;
-                  $scope.linedata = response.data.data;
-                  $scope.lineseries = response.data.series;
+                  $timeout(function() {
+                    $scope.dataLoaded = true;
+                    $scope.linelabels = response.data.label;
+                    $scope.linedata = response.data.data;
+                    $scope.lineseries = response.data.series;
+                  });
 
                 });
               }
@@ -254,10 +262,12 @@ angular.module('easyFin4uApp')
                 var performanceChartUrl = "/api/getPerformanceData?period="+5;
                 $http.get(performanceChartUrl).then(function(response) {
                   //console.log(response);
-                  $scope.dataLoaded = true;
-                  $scope.linelabels = response.data.label;
-                  $scope.linedata = response.data.data;
-                  $scope.lineseries = response.data.series;
+                  $timeout(function() {
+                    $scope.dataLoaded = true;
+                    $scope.linelabels = response.data.label;
+                    $scope.linedata = response.data.data;
+                    $scope.lineseries = response.data.series;
+                  });
 
                 });
               }
@@ -279,7 +289,16 @@ angular.module('easyFin4uApp')
               }
 
               renderDistributionGraph();
+              /* Added to Fix the Flicker Bug of Angular Charts */
+              var $chart;
+                $scope.$on("create", function (event, chart) {
+                  if (typeof $chart !== "undefined") {
+                    $chart.destroy();
+                  }
 
+                  $chart = chart;
+                });
+              /* Added to Fix the Flicker Bug of Angular Charts */
 					 }
 
 					 $rootScope.logout = function(){
