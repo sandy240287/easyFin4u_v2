@@ -86,9 +86,13 @@
                     </ul>
                   </div>
                     <p>
-                      <p class="text-center" ng-hide="dataLoaded">
+                      <p class="text-center" ng-show="spinnerLoaded">
                           <i class="fa fa-4x fa-spinner fa-spin"></i>
                       </p>
+                      <div class="text-center" ng-show="noDataToDisplay">
+                            <i class="fa fa-frown-o fa-5x"></i>
+                          <h3> No Data to Display </h3>
+                      </div>
                       <canvas ng-show="dataLoaded" id="line" class="chart chart-line" chart-data="linedata" chart-labels="linelabels"
                             chart-legend="legend" chart-series="lineseries">
                       </canvas>
@@ -99,8 +103,11 @@
         <div class="col-sm-6">
             <div class="well">
                 <h3><i class="fa fa-pie-chart"></i> Portfolio Distribution</h3>
-
                     <p>
+                      <div class="text-center" ng-show="noDataToDisplayPie">
+                            <i class="fa fa-frown-o fa-5x"></i>
+                          <h3> No Data to Display </h3>
+                      </div>
                       <canvas id="pie" class="chart chart-pie" chart-legend="legend" chart-options="pieOptions"
                         chart-data="piedata" chart-labels="pielabels">
                       </canvas>

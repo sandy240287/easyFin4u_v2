@@ -4,34 +4,34 @@ angular.module('easyFin4uApp', ['chart.js','ngCookies', 'ngResource', 'ngMessage
     $locationProvider.html5Mode(true);
     $routeProvider
     .when('/', {
-      templateUrl: 'views/main.html',
-      controller: 'mainController'
+      templateUrl: 'views/main.html'
+      //controller: 'mainController'
     })
     .when('/login', {
-      templateUrl: 'views/login.html',
-      controller: 'loginController'
+      templateUrl: 'views/login.html'
+      //controller: 'loginController'
     }).when('/signup', {
-      templateUrl: 'views/signup.html',
-      controller: 'signupController'
+      templateUrl: 'views/signup.html'
+      //controller: 'signupController'
     })
     .when('/fdDetails', {
-      templateUrl: 'views/fdDetails.html',
-      controller: 'fdController'
+      templateUrl: 'views/fdDetails.html'
+      //controller: 'fdController'
     })
     .when('/profile', {
-      templateUrl: 'views/profile.html',
-      controller: 'profileController'
+      templateUrl: 'views/profile.html'
+      //controller: 'profileController'
     })
     .when('/forgot', {
-      templateUrl: 'views/forgot.html',
-      controller: 'forgotController'
+      templateUrl: 'views/forgot.html'
+      //controller: 'forgotController'
     })
     .when('/portfolio', {
-      templateUrl: 'views/portfolio.html',
-      controller: 'portfolioController'
+      templateUrl: 'views/portfolio.html'
+      //controller: 'portfolioController'
     }).when('/terms', {
-      templateUrl: 'views/terms.html',
-      controller: 'tncController'
+      templateUrl: 'views/terms.html'
+      //controller: 'tncController'
     })
     .otherwise({
       redirectTo: '/'

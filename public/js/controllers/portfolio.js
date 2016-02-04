@@ -10,9 +10,8 @@ angular.module('easyFin4uApp')
       datasetFill: false
     });
   }])
-	.controller('portfolioController', ['$rootScope','$scope','$http','$location','$timeout',
-		function($rootScope, $scope, $http,$location,$timeout) {
-
+	.controller('portfolioController', ['$rootScope','$scope','$http','$location','$timeout','$q',
+		function($rootScope, $scope, $http,$location,$timeout,$q) {
       var userEmail = $scope.user;
       var pielabels1 ="";
       var piedata1 = "";
@@ -109,14 +108,14 @@ angular.module('easyFin4uApp')
                                    view: false, align: "left"},
                                 { // edit option
                                   closeAfterEdit: true ,
-                                  reloadAfterSubmit:false,
+                                  reloadAfterSubmit:true,
                                   afterComplete: function (result) {
                                                     success: {
                                                       //alert(result.responseText);
-                                                      renderDistributionGraph();
+                                                      renderDistributionGraph($piechart);
 
                                                     }
-                                                    fail: { console.log(result.responseText); }
+                                                    fail: { console.log("EDIT"+result.responseText); }
                                                 },
                                     beforeShowForm: function(form) {
                                       $('#name', form).attr("disabled","true");  //To Disable Edit Box
@@ -136,14 +135,14 @@ angular.module('easyFin4uApp')
                                 },
                                 { // add option
                                   closeAfterAdd: true ,
-                                  reloadAfterSubmit:false,
+                                  reloadAfterSubmit:true,
                                   afterComplete: function (result) {
                                                     success: {
                                                       //alert(result.responseText);
-                                                      renderDistributionGraph();
-                                                      renderPerformanceGraph();
+                                                      renderDistributionGraph($piechart);
+                                                      renderPerformanceGraph($linechart);
                                                     }
-                                                    fail: { console.log(result.responseText); }
+                                                    fail: { console.log("ADD"+result.responseText); }
                                                 },
                                   beforeShowForm: function(form) {
                                     $('#name', form).attr("disabled","true");  //To Disable Edit Box
@@ -161,12 +160,12 @@ angular.module('easyFin4uApp')
                                     /* To Centralize Edit Modal */
                                   }
                                 },{
-                                  reloadAfterSubmit:false,
+                                  reloadAfterSubmit:true,
                                   afterComplete: function (result) {
                                                     success: {
-                                                      //alert(result.responseText);
-                                                      renderDistributionGraph();
-                                                      renderPerformanceGraph();
+                                                      //alert("DEL"+result.responseText);
+                                                      renderDistributionGraph($piechart);
+                                                      renderPerformanceGraph($linechart);
                                                     }
                                                     fail: { console.log(result.responseText); }
                                                 }
@@ -178,99 +177,199 @@ angular.module('easyFin4uApp')
                           $grid.jqGrid("setGridWidth", newWidth, true);
 				     });
 
-						 	//$scope.onClick = function (points, evt) {
-						 	//	console.log(points, evt);
-						 	//};
+             var $piechart,$linechart;
+             $scope.$on("create", function (event, chart) {
+               if (typeof chart !== "undefined") {
+                 if((chart.id === 'chart-0')||(chart.id === 'chart-1')||(chart.id === 'chart-2')){
+                   //alert(chart.id);
+                   $piechart = chart;
+                 }else{
+                   $linechart = chart;
+                 }
+               }
+             });
 
-						 	// Simulate async data update
-						 	//$timeout(function () {
-						 	//	$scope.data = [
-						 	//		[28, 48, 40, 19, 86, 27, 90],
-						 	//		[65, 59, 80, 81, 56, 55, 40]
-						 	//	];
-						 	//}, 3000);
+              $scope.spinnerLoaded = true;
+              $scope.noDataToDisplay = false;
+              $scope.noDataToDisplayPie = false;
+              $scope.dataLoaded = true;
 
-              $scope.perfDataLoaded = false;
+              renderPerformanceGraph($linechart);
 
-              renderPerformanceGraph();
-
-              function renderPerformanceGraph(){
+              function renderPerformanceGraph($linechart){
                 var performanceChartUrl = "/api/getDailyPerformanceData?period="+14;
+                $scope.spinnerLoaded = true;
+                $scope.noDataToDisplay = false;
                 $http.get(performanceChartUrl).then(function(response) {
-                  //console.log(response);
-                  $timeout(function() {
-                    $scope.dataLoaded = true;
-                    $scope.linelabels = response.data.label;
-                    $scope.linedata = response.data.data;
-                    $scope.lineseries = response.data.series;
-                  });
+                    if(response.data.length === 0){
+                      console.log("No Data to Display on Chart");
+                      $scope.noDataToDisplay = true;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = undefined;
+                      $rootScope.linedata = undefined;
+                      $rootScope.lineseries = undefined;
+
+                      if($linechart !== undefined){
+                        $linechart.destroy();
+                        document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
+                      }
+                    }else{
+                      console.log("Render"+JSON.stringify(response));
+                      $scope.noDataToDisplay = false;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = response.data.label;
+                      $rootScope.linedata = response.data.data;
+                      $rootScope.lineseries = response.data.series;
+
+                      if($linechart !== undefined)
+                        $linechart.update();
+
+                  }
 
                 });
               }
 
               //Currently being used for 2 weeks(14 days) and 1 month(30 days)
               $scope.daysData = function(period) {
+                $scope.spinnerLoaded = true;
+                $scope.noDataToDisplay = false;
                 if(period === undefined)
                   period = 14; //Default is 14 days
                 var performanceChartUrl = "/api/getDailyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
-                  //console.log(response);
-                  $timeout(function() {
-                    $scope.dataLoaded = true;
-                    $scope.linelabels = response.data.label;
-                    $scope.linedata = response.data.data;
-                    $scope.lineseries = response.data.series;
-                  });
+                    if(response.data.length === 0){
+                      console.log("No Data to Display on Chart");
+                      $scope.noDataToDisplay = true;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = undefined;
+                      $rootScope.linedata = undefined;
+                      $rootScope.lineseries = undefined;
 
+                      if($linechart !== undefined){
+                        $linechart.destroy();
+                        document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
+                      }
+                    }else{
+                      console.log("Render"+JSON.stringify(response));
+                      $scope.noDataToDisplay = false;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = response.data.label;
+                      $rootScope.linedata = response.data.data;
+                      $rootScope.lineseries = response.data.series;
+
+                      if($linechart !== undefined)
+                        $linechart.update();
+
+                  }
                 });
+
               }
+
 
               //Currently being used for 2 months(8 weeks), 3 months(12 weeks) and 6 months(24 weeks)
               $scope.weeksData = function(period) {
+                $scope.spinnerLoaded = true;
+                $scope.noDataToDisplay = false;
+
                 if(period === undefined)
                   period = 4;  // Default is 4 weeks
                 var performanceChartUrl = "/api/getWeeklyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
-                  //console.log(response);
-                  $timeout(function() {
-                    $scope.dataLoaded = true;
-                    $scope.linelabels = response.data.label;
-                    $scope.linedata = response.data.data;
-                    $scope.lineseries = response.data.series;
-                  });
+                    if(response.data.length === 0){
+                      console.log("No Data to Display on Chart");
+                      $scope.noDataToDisplay = true;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = undefined;
+                      $rootScope.linedata = undefined;
+                      $rootScope.lineseries = undefined;
 
+                      if($linechart !== undefined){
+                        $linechart.destroy();
+                        document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
+                      }
+                    }else{
+                      console.log("Render"+JSON.stringify(response));
+                      $scope.noDataToDisplay = false;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = response.data.label;
+                      $rootScope.linedata = response.data.data;
+                      $rootScope.lineseries = response.data.series;
+
+                      if($linechart !== undefined)
+                        $linechart.update();
+
+                  }
                 });
               }
 
               $scope.monthsData = function(period) {
+                $scope.spinnerLoaded = true;
+                $scope.noDataToDisplay = false;
+
                 if(period === undefined)
                   period = 12;  //Default is 12 months
                 var performanceChartUrl = "/api/getMonthlyPerformanceData?period="+period;
                 $http.get(performanceChartUrl).then(function(response) {
-                  //console.log(response);
-                  $timeout(function() {
-                    $scope.dataLoaded = true;
-                    $scope.linelabels = response.data.label;
-                    $scope.linedata = response.data.data;
-                    $scope.lineseries = response.data.series;
-                  });
+                    if(response.data.length === 0){
+                      console.log("No Data to Display on Chart");
+                      $scope.noDataToDisplay = true;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = undefined;
+                      $rootScope.linedata = undefined;
+                      $rootScope.lineseries = undefined;
 
+                      if($linechart !== undefined){
+                        $linechart.destroy();
+                        document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
+                      }
+                    }else{
+                      console.log("Render"+JSON.stringify(response));
+                      $scope.noDataToDisplay = false;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = response.data.label;
+                      $rootScope.linedata = response.data.data;
+                      $rootScope.lineseries = response.data.series;
+
+                      if($linechart !== undefined)
+                        $linechart.update();
+
+                  }
                 });
               }
 
               $scope.all = function() {
+                $scope.spinnerLoaded = true;
+                $scope.noDataToDisplay = false;
+
                 var performanceChartUrl = "/api/getPerformanceData?period="+5;
                 $http.get(performanceChartUrl).then(function(response) {
-                  //console.log(response);
-                  $timeout(function() {
-                    $scope.dataLoaded = true;
-                    $scope.linelabels = response.data.label;
-                    $scope.linedata = response.data.data;
-                    $scope.lineseries = response.data.series;
-                  });
+                    if(response.data.length === 0){
+                      console.log("No Data to Display on Chart");
+                      $scope.noDataToDisplay = true;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = undefined;
+                      $rootScope.linedata = undefined;
+                      $rootScope.lineseries = undefined;
 
+                      if($linechart !== undefined){
+                        $linechart.destroy();
+                        document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
+                      }
+                    }else{
+                      console.log("Render"+JSON.stringify(response));
+                      $scope.noDataToDisplay = false;
+                      $scope.spinnerLoaded = false;
+                      $rootScope.linelabels = response.data.label;
+                      $rootScope.linedata = response.data.data;
+                      $rootScope.lineseries = response.data.series;
+
+                      if($linechart !== undefined)
+                        $linechart.update();
+
+                  }
                 });
               }
+
 
               $scope.pieOptions = {
                 animationEasing : "easeOutBounce",
@@ -279,25 +378,35 @@ angular.module('easyFin4uApp')
                 tooltipFontSize: 10
               };
 
-              function renderDistributionGraph(){
+              function renderDistributionGraph($piechart){
                 $http.get("/api/getDistributionData").then(function(response) {
-
-                  $rootScope.pielabels = response.data.label;
-                  $rootScope.piedata = response.data.data;
+                  if(response.data.label.length === 0){
+                    $scope.noDataToDisplayPie = true;
+                    $rootScope.pielabels = [];
+                    $rootScope.piedata = [];
+                    if($piechart !== undefined){
+                      $piechart.destroy();
+                      document.getElementsByClassName("pie-legend")[0].style.visibility='hidden';
+                    }
+                  }else{
+                    $scope.noDataToDisplayPie = false;
+                    $rootScope.pielabels = response.data.label;
+                    $rootScope.piedata = response.data.data;
+                  }
 
                 });
               }
 
-              renderDistributionGraph();
+              renderDistributionGraph($piechart);
               /* Added to Fix the Flicker Bug of Angular Charts */
-              var $chart;
-                $scope.$on("create", function (event, chart) {
-                  if (typeof $chart !== "undefined") {
-                    $chart.destroy();
-                  }
-
-                  $chart = chart;
-                });
+              // var $chart;
+              //   $scope.$on("create", function (event, chart) {
+              //     if (typeof $chart !== "undefined") {
+              //       $chart.destroy();
+              //     }
+              //
+              //     $chart = chart;
+              //   });
               /* Added to Fix the Flicker Bug of Angular Charts */
 					 }
 

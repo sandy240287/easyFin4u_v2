@@ -112,7 +112,6 @@ module.exports = function(app,passport) {
           res.redirect('/');
           /* To Handle server re-starts */
 
-
         var query = {userid: req.user._id};
         var distributionLabel = [];
         var distributionData = [];
@@ -182,69 +181,72 @@ module.exports = function(app,passport) {
                   q1.$and.push(q2);
                   q1.$and.push(q3);
 
-                  done(null,q1);
+                  done(null,q1,q2,q3);
                 });
-            },function getMonthlyData(q1,done){
-                      //var test = {symbol: 'GOOG'};
-                      //console.log(q1);
-                      monthly_historicalstock.find(q1,function(err, stockValues) {
-                          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                          if (err){
-                            console.log("Error:"+ err);
-                            res.send(err);
-                          }
+            },function getMonthlyData(q1,q2,q3,done){
+                      if(q2.$or.length > 0 && q3.$or.length > 0){
+                        monthly_historicalstock.find(q1,function(err, stockValues) {
+                            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                            if (err){
+                              console.log("Error:"+ err);
+                              res.send(err);
+                            }
 
-                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
-                          stockValues.sort(SortByName);
+                            /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                            stockValues.sort(SortByName);
 
-                          var performanceSeriesForCount = [], stockValueSorted = [];
-                          for (stockValue in stockValues){
-                            performanceSeriesForCount.push(stockValues[stockValue].symbol);
-                          }
-                          performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
-                              return performanceSeriesForCount.indexOf(elem) == pos;
-                          });
+                            var performanceSeriesForCount = [], stockValueSorted = [];
+                            for (stockValue in stockValues){
+                              performanceSeriesForCount.push(stockValues[stockValue].symbol);
+                            }
+                            performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
+                                return performanceSeriesForCount.indexOf(elem) == pos;
+                            });
 
-                          var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
+                            var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
 
-                          for (stockValueDateSort in stockValueSplit){
-                            stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
-                            stockValueSorted.push(stockValueSplit[stockValueDateSort]);
-                          }
+                            for (stockValueDateSort in stockValueSplit){
+                              stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
+                              stockValueSorted.push(stockValueSplit[stockValueDateSort]);
+                            }
 
-                          stockValues = [].concat.apply([], stockValueSorted);
-                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                            stockValues = [].concat.apply([], stockValueSorted);
+                            /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
 
-                          for (stockValue in stockValues){
-                            performanceData.push(stockValues[stockValue].day_end_adjusted);
-                            performanceSeries.push(stockValues[stockValue].symbol);
-                            performanceLabel.push(stockValues[stockValue].date);
-                          }
+                            for (stockValue in stockValues){
+                              performanceData.push(stockValues[stockValue].day_end_adjusted);
+                              performanceSeries.push(stockValues[stockValue].symbol);
+                              performanceLabel.push(stockValues[stockValue].date);
+                            }
 
-                          performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
-                              return performanceLabel.indexOf(elem) == pos;
-                          });
+                            performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
+                                return performanceLabel.indexOf(elem) == pos;
+                            });
 
-                          performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
-                              return performanceSeries.indexOf(elem) == pos;
-                          });
+                            performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
+                                return performanceSeries.indexOf(elem) == pos;
+                            });
 
-                          // TODO: Reverse arrays all
-                          // performanceLabelUnique = performanceLabelUnique.reverse();
-                          // performanceSeriesUnique = performanceSeriesUnique.reverse();
-                          // performanceData = performanceData.reverse();
+                            // TODO: Reverse arrays all
+                            // performanceLabelUnique = performanceLabelUnique.reverse();
+                            // performanceSeriesUnique = performanceSeriesUnique.reverse();
+                            // performanceData = performanceData.reverse();
 
-                          var performanceDataSpliced = [], size = performanceLabelUnique.length;
+                            var performanceDataSpliced = [], size = performanceLabelUnique.length;
 
-                          while (performanceData.length > 0)
-                                performanceDataSpliced.push(performanceData.splice(0, size));
+                            while (performanceData.length > 0)
+                                  performanceDataSpliced.push(performanceData.splice(0, size));
 
-                          //console.log(performanceDataSpliced);
+                            //console.log(performanceDataSpliced);
 
-                          completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
-                          //console.log(JSON.stringify(completeData));
-                          res.json(completeData);
-                      });
+                            completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
+                            //console.log(JSON.stringify(completeData));
+                            res.json(completeData);
+                        });
+                      }else{
+                        res.json("");
+                        done(null);
+                      }
               }],function(err){
                 if (err)
                   console.log("ERROR"+err);
@@ -293,75 +295,78 @@ module.exports = function(app,passport) {
                   q1.$and.push(q2);
                   q1.$and.push(q3);
 
-                  done(null,q1);
+                  done(null,q1,q2,q3);
                 });
-            },function getMonthlyData(q1,done){
-                      //var test = {symbol: 'GOOG'};
-                      //console.log(q1);
-                      weekly_historicalstock.find(q1,function(err, stockValues) {
-                          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                          if (err){
-                            console.log("Error:"+ err);
-                            res.send(err);
-                          }
+            },function getMonthlyData(q1,q2,q3,done){
+                      if(q2.$or.length > 0 && q3.$or.length > 0){
+                        weekly_historicalstock.find(q1,function(err, stockValues) {
+                            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                            if (err){
+                              console.log("Error:"+ err);
+                              res.send(err);
+                            }
 
-                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
-                          stockValues.sort(SortByName);
-                          //console.log(stockValues);
-                          var performanceSeriesForCount = [], stockValueSorted = [];
-                          for (stockValue in stockValues){
-                            performanceSeriesForCount.push(stockValues[stockValue].symbol);
-                          }
-                          performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
-                              return performanceSeriesForCount.indexOf(elem) == pos;
-                          });
+                            /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                            stockValues.sort(SortByName);
+                            //console.log(stockValues);
+                            var performanceSeriesForCount = [], stockValueSorted = [];
+                            for (stockValue in stockValues){
+                              performanceSeriesForCount.push(stockValues[stockValue].symbol);
+                            }
+                            performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
+                                return performanceSeriesForCount.indexOf(elem) == pos;
+                            });
 
-                          var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
-                          //console.log(stockValueSplit);
-                          for (stockValueDateSort in stockValueSplit){
-                            stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
-                            stockValueSorted.push(stockValueSplit[stockValueDateSort]);
-                          }
-                          //console.log(stockValueSorted);
-                          stockValues = [].concat.apply([], stockValueSorted);
-                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                            var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
+                            //console.log(stockValueSplit);
+                            for (stockValueDateSort in stockValueSplit){
+                              stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
+                              stockValueSorted.push(stockValueSplit[stockValueDateSort]);
+                            }
+                            //console.log(stockValueSorted);
+                            stockValues = [].concat.apply([], stockValueSorted);
+                            /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
 
-                          for (stockValue in stockValues){
-                            performanceData.push(stockValues[stockValue].day_end_adjusted);
-                            performanceSeries.push(stockValues[stockValue].symbol);
-                            performanceLabel.push(stockValues[stockValue].date);
-                          }
-                          //console.log(JSON.stringify(totalStockQty));
-                          // for (porData in userPortfolios){
-                          //   distributionLabel.push(userPortfolios[porData].name);
-                          //   //Convert Share Distribution to Percent
-                          //   percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
-                          //   distributionData.push(percentShare);
-                          // }
-                          performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
-                              return performanceLabel.indexOf(elem) == pos;
-                          });
+                            for (stockValue in stockValues){
+                              performanceData.push(stockValues[stockValue].day_end_adjusted);
+                              performanceSeries.push(stockValues[stockValue].symbol);
+                              performanceLabel.push(stockValues[stockValue].date);
+                            }
+                            //console.log(JSON.stringify(totalStockQty));
+                            // for (porData in userPortfolios){
+                            //   distributionLabel.push(userPortfolios[porData].name);
+                            //   //Convert Share Distribution to Percent
+                            //   percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
+                            //   distributionData.push(percentShare);
+                            // }
+                            performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
+                                return performanceLabel.indexOf(elem) == pos;
+                            });
 
-                          performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
-                              return performanceSeries.indexOf(elem) == pos;
-                          });
+                            performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
+                                return performanceSeries.indexOf(elem) == pos;
+                            });
 
-                          // TODO: Reverse arrays all
-                          // performanceLabelUnique = performanceLabelUnique.reverse();
-                          // performanceSeriesUnique = performanceSeriesUnique.reverse();
-                          // performanceData = performanceData.reverse();
+                            // TODO: Reverse arrays all
+                            // performanceLabelUnique = performanceLabelUnique.reverse();
+                            // performanceSeriesUnique = performanceSeriesUnique.reverse();
+                            // performanceData = performanceData.reverse();
 
-                          var performanceDataSpliced = [], size = performanceLabelUnique.length;
+                            var performanceDataSpliced = [], size = performanceLabelUnique.length;
 
-                          while (performanceData.length > 0)
-                                performanceDataSpliced.push(performanceData.splice(0, size));
+                            while (performanceData.length > 0)
+                                  performanceDataSpliced.push(performanceData.splice(0, size));
 
-                          //console.log(performanceDataSpliced);
+                            //console.log(performanceDataSpliced);
 
-                          completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
-                          //console.log(JSON.stringify(completeData));
-                          res.json(completeData);
+                            completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
+                            //console.log(JSON.stringify(completeData));
+                            res.json(completeData);
                       });
+                    }else{
+                      res.json("");
+                      done(null);
+                    }
               }],function(err){
                 if (err)
                   console.log("ERROR"+err);
@@ -409,68 +414,83 @@ module.exports = function(app,passport) {
                   q1.$and.push(q2);
                   q1.$and.push(q3);
 
-                  done(null,q1);
+                  done(null,q1,q2,q3);
                 });
-            },function getData(q1,done){
+            },function getData(q1,q2,q3,done){
+                      //console.log(q2.$or.length + "     :     " + q3.$or.length);
+                      if(q2.$or.length > 0 && q3.$or.length > 0){
+                        //console.log(q1);
+                        historicalstock.find(q1,null,function(err, stockValues) {
+                            // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+                            if (err){
+                              console.log("Error:"+ err);
+                              res.send(err);
+                            }
+                            console.log(JSON.stringify(stockValues));
+                            if(stockValues === undefined || stockValues.length===0){
+                              //console.log("JSON EMPTY");
+                              res.json(stockValues);
+                              done(null,stockValues);
+                            }
+                            else{
+                                  /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                                  stockValues.sort(SortByName);
 
-                      historicalstock.find(q1,null,function(err, stockValues) {
-                          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-                          if (err){
-                            console.log("Error:"+ err);
-                            res.send(err);
-                          }
+                                  var performanceSeriesForCount = [], stockValueSorted = [];
+                                  for (stockValue in stockValues){
+                                    performanceSeriesForCount.push(stockValues[stockValue].symbol);
+                                  }
+                                  performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
+                                      return performanceSeriesForCount.indexOf(elem) == pos;
+                                  });
 
-                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
-                          stockValues.sort(SortByName);
+                                  var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
 
-                          var performanceSeriesForCount = [], stockValueSorted = [];
-                          for (stockValue in stockValues){
-                            performanceSeriesForCount.push(stockValues[stockValue].symbol);
-                          }
-                          performanceLabelUnique = performanceSeriesForCount.filter(function(elem, pos) {
-                              return performanceSeriesForCount.indexOf(elem) == pos;
-                          });
+                                  for (stockValueDateSort in stockValueSplit){
+                                    stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
+                                    stockValueSorted.push(stockValueSplit[stockValueDateSort]);
+                                  }
 
-                          var stockValueSplit = createGroupedArray(stockValues,(stockValues.length/performanceLabelUnique.length));
+                                  stockValues = [].concat.apply([], stockValueSorted);
+                                  /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
 
-                          for (stockValueDateSort in stockValueSplit){
-                            stockValueSplit[stockValueDateSort] = stockValueSplit[stockValueDateSort].sort(comp);
-                            stockValueSorted.push(stockValueSplit[stockValueDateSort]);
-                          }
+                                  for (stockValue in stockValues){
+                                    performanceData.push(stockValues[stockValue].day_end_adjusted);
+                                    performanceSeries.push(stockValues[stockValue].symbol);
+                                    performanceLabel.push(stockValues[stockValue].date);
+                                  }
 
-                          stockValues = [].concat.apply([], stockValueSorted);
-                          /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                                  performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
+                                      return performanceLabel.indexOf(elem) == pos;
+                                  });
 
-                          for (stockValue in stockValues){
-                            performanceData.push(stockValues[stockValue].day_end_adjusted);
-                            performanceSeries.push(stockValues[stockValue].symbol);
-                            performanceLabel.push(stockValues[stockValue].date);
-                          }
+                                  performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
+                                      return performanceSeries.indexOf(elem) == pos;
+                                  });
 
-                          performanceLabelUnique = performanceLabel.filter(function(elem, pos) {
-                              return performanceLabel.indexOf(elem) == pos;
-                          });
+                                  // TODO: Reverse arrays all
+                                  // performanceLabelUnique = performanceLabelUnique.reverse();
+                                  // performanceSeriesUnique = performanceSeriesUnique.reverse();
+                                  // performanceData = performanceData.reverse();
 
-                          performanceSeriesUnique = performanceSeries.filter(function(elem, pos) {
-                              return performanceSeries.indexOf(elem) == pos;
-                          });
+                                  var performanceDataSpliced = [], size = performanceLabelUnique.length;
 
-                          // TODO: Reverse arrays all
-                          // performanceLabelUnique = performanceLabelUnique.reverse();
-                          // performanceSeriesUnique = performanceSeriesUnique.reverse();
-                          // performanceData = performanceData.reverse();
+                                  while (performanceData.length > 0)
+                                        performanceDataSpliced.push(performanceData.splice(0, size));
 
-                          var performanceDataSpliced = [], size = performanceLabelUnique.length;
+                                  //console.log(performanceDataSpliced);
 
-                          while (performanceData.length > 0)
-                                performanceDataSpliced.push(performanceData.splice(0, size));
+                                  completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
+                                  console.log(JSON.stringify(completeData));
+                                  res.json(completeData);
+                                  done(null,completeData);
+                                }
 
-                          //console.log(performanceDataSpliced);
-
-                          completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
-                          //console.log(JSON.stringify(completeData));
-                          res.json(completeData);
-                      });
+                        });
+                      }else{
+                        res.json("");
+                        done(null);
+                      }
               }],function(err){
                 if (err)
                   console.log("ERROR"+err);
@@ -498,7 +518,7 @@ var getUserPortfolioData = function(req,res,done){
 
   var query = {userid: req.user._id};
 
-  console.log(JSON.stringify(query));
+  //console.log(JSON.stringify(query));
 
   async.waterfall([
 
@@ -545,7 +565,7 @@ var getUserPortfolioData = function(req,res,done){
             };
 
             returnData.push(profileData);
-            // console.log(returnData);
+            //console.log("Yahoo Data"+ returnData);
             done(null,returnData);
           }
           if (error){
@@ -559,6 +579,7 @@ var getUserPortfolioData = function(req,res,done){
         if ( err){
           done(err);// either file1, file2 or file3 has raised an error, so you should not use results and handle the error
         } else {
+          //console.log("Final Return"+ JSON.stringify(returnData));
           res.json(returnData);
           done(null,returnData);
         }

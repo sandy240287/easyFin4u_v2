@@ -3,7 +3,6 @@ angular.module('easyFin4uApp')
 	// inject the Todo service factory into our controller
 	.controller('fdController', ['$rootScope','$scope','$http','$location',
 		function($rootScope, $scope, $http,$location) {
-
       var userEmail = $scope.user;
       //console.log(userEmail);
       if(!userEmail)
