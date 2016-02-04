@@ -13,6 +13,7 @@ angular.module('easyFin4uApp')
 				$http.post('/api/acceptTnc', {status:"true",user : $rootScope.user})
 				.success(function(response){
 					//console.log(JSON.stringify(response));
+					$rootScope.tncStatus = true;
 					$rootScope.user = response;
 					$scope.messagePresent = false;
 					$scope.message = 'Aceeptance Successful';
@@ -20,6 +21,7 @@ angular.module('easyFin4uApp')
 				})
 				.error(function(response){
 					// Error: authentication failed
+					$rootScope.tncStatus = false;
 					$scope.messagePresent = true;
 					$scope.message = 'Aceeptance failed!';
 					$location.url('/login');
@@ -31,6 +33,7 @@ angular.module('easyFin4uApp')
 				//$scope.formData = loginServices.login($scope.formData);
 				$http.post('/api/acceptTnc', {status:"false",user : $rootScope.user})
 				.success(function(response){
+					$rootScope.tncStatus = false;
 					$rootScope.user = undefined;
 					$scope.messagePresent = false;
 					$scope.message = 'Rejection Successful';
@@ -38,6 +41,7 @@ angular.module('easyFin4uApp')
 				})
 				.error(function(response){
 					// Error: authentication failed
+					$rootScope.tncStatus = false;
 					$scope.messagePresent = true;
 					$scope.message = 'Rejection failed!';
 					$location.url('/login');

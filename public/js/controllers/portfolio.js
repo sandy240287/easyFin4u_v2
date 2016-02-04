@@ -16,6 +16,15 @@ angular.module('easyFin4uApp')
       var pielabels1 ="";
       var piedata1 = "";
       //console.log(userEmail);
+
+      if(!$rootScope.tncStatus){
+					$location.url('/terms');
+			}else{
+				if($rootScope.tncStatus === false){
+					$location.url('/terms');
+				}
+			}
+
       if(!userEmail)
         $location.url('/login');
 			else{
@@ -411,8 +420,10 @@ angular.module('easyFin4uApp')
 					 }
 
 					 $rootScope.logout = function(){
-						 	$rootScope.user = undefined;
-				      $rootScope.message = 'Logged out.';
+              $scope = undefined;
+              $rootScope = undefined;
+						 	//$rootScope.user = undefined;
+				      ///$rootScope.message = 'Logged out.';
 				      $http.get('/logout');
 				    };
 	}]);

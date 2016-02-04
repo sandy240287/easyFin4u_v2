@@ -1,7 +1,7 @@
 {
   "name": "easyFin4u",
   "version": "0.0.0",
-  "description": "Easy Finance Manager",
+  "description": "Easy Finance Watch",
   "main": "server.js",
   "author": "Sandeep Saini",
   "dependencies": {

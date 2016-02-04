@@ -6,7 +6,8 @@ angular.module('easyFin4uApp')
 			$scope.user =  $rootScope.user;
 
 			$rootScope.logout = function(){
-				console.log("Logout");
+				//console.log("Logout");
+				$rootScope = undefined;
 				 $rootScope.user = undefined;
 				 $rootScope.message = 'Logged out.';
 				 $http.get('/logout');

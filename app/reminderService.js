@@ -68,7 +68,7 @@ module.exports = {reminderService: function() {
                   var mailOptions = {
                     to: userEmail,
                     from: 'maturityReminder@easyFin4u.com',
-                    subject: 'Deposit Maturity Reminder - Easy Finance Manager',
+                    subject: 'Deposit Maturity Reminder - Easy Finance Watch',
                     text: 'Hello,\n\n' +
                       'This is a reminder mail for the maturity of your Deposit with the below details. \n\n' +
                       'Bank            : '+ deposits[deposit].bank + '\n\n' +

@@ -3,6 +3,9 @@ angular.module('easyFin4uApp')
 	// inject the Todo service factory into our controller
 	.controller('signupController', ['$rootScope','$scope','$http','$location',
 		function($rootScope, $scope, $http,$location) {
+			$rootScope.dangerMessagePresent = false;
+			$rootScope.messagePresent = false;
+			$rootScope.successMessagePresent = false;
 
 			$scope.signup = function() {
 				console.log($scope.formData);

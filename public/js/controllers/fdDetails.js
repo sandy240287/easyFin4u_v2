@@ -5,6 +5,16 @@ angular.module('easyFin4uApp')
 		function($rootScope, $scope, $http,$location) {
       var userEmail = $scope.user;
       //console.log(userEmail);
+			console.log($rootScope.tncStatus);
+
+			if(!$rootScope.tncStatus){
+					$location.url('/terms');
+			}else{
+				if($rootScope.tncStatus === false){
+					$location.url('/terms');
+				}
+			}
+
       if(!userEmail)
         $location.url('/login');
 			else{
@@ -112,7 +122,7 @@ angular.module('easyFin4uApp')
 														intro.setOptions({
 														            steps: [
 														              {
-														                intro: "Welcome to Easy Finance Manager - Your tool to personalized portfolio" +
+														                intro: "Welcome to Easy Finance Watch - Your tool to personalized portfolio" +
 																										" and deposit management. You can see the real time market stats of your "+
 																										"investment."
 														              },
@@ -147,6 +157,7 @@ angular.module('easyFin4uApp')
 					 }
 
 					 $rootScope.logout = function(){
+						  $rootScope = undefined;
 						 	$rootScope.user = undefined;
 				      $rootScope.message = 'Logged out.';
 				      $http.get('/logout');

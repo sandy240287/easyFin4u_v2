@@ -1,4 +1,4 @@
-# Easy Finance Manager
+# Easy Finance Watch
 
 An application built using Node, Express , Angular and Mongo for managing multiple financial services.
 
