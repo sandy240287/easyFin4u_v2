@@ -7,9 +7,9 @@ angular.module('easyFin4uApp')
 
 			$rootScope.logout = function(){
 				//console.log("Logout");
-				$rootScope = undefined;
-				 //$rootScope.user = undefined;
-				 //$rootScope.message = 'Logged out.';
+				//$rootScope = undefined;
+				 $rootScope.user = undefined;
+				 $rootScope.message = 'Logged out.';
 				 $http.get('/logout');
 			 };
 	}]);

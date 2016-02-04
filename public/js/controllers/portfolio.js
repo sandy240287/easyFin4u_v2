@@ -420,10 +420,10 @@ angular.module('easyFin4uApp')
 					 }
 
 					 $rootScope.logout = function(){
-              $scope = undefined;
-              $rootScope = undefined;
-						 	//$rootScope.user = undefined;
-				      ///$rootScope.message = 'Logged out.';
+              //$scope = undefined;
+              //$rootScope = undefined;
+						 	$rootScope.user = undefined;
+				      $rootScope.message = 'Logged out.';
 				      $http.get('/logout');
 				    };
 	}]);
