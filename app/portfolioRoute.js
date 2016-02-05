@@ -8,7 +8,7 @@ const http = require('http');
 const apiHttp = require('http');
 var request = require('request');
 var async = require('async');
-
+var NodeCache = require( "node-cache" );
 
 module.exports = function(app,passport) {
   app.get('/api/userPortfolio', function(req, res) {
@@ -105,7 +105,7 @@ module.exports = function(app,passport) {
             });
       });
 
-      app.get('/api/getDistributionData', function(req, res) {
+      app.get('/api/getOriginalDistributionData', function(req, res) {
 
         /* To Handle server re-starts */
         if(req.user === undefined)
@@ -126,13 +126,14 @@ module.exports = function(app,passport) {
             res.send(err);
           }
           for (porData in userPortfolios){
-            totalStockQty = parseInt(totalStockQty) + parseInt(userPortfolios[porData].shares_qty);
+            totalStockQty = parseInt(totalStockQty) +
+                            (parseInt(userPortfolios[porData].shares_qty)*parseInt(userPortfolios[porData].cost_per_share));
           }
           //console.log(JSON.stringify(totalStockQty));
           for (porData in userPortfolios){
             distributionLabel.push(userPortfolios[porData].name);
             //Convert Share Distribution to Percent
-            percentShare = parseFloat((parseFloat(userPortfolios[porData].shares_qty).toFixed(2)/totalStockQty)*100).toFixed(2);
+            percentShare = parseFloat(((parseInt(userPortfolios[porData].shares_qty)*parseInt(userPortfolios[porData].cost_per_share)).toFixed(2)/totalStockQty)*100).toFixed(2);
             distributionData.push(percentShare);
           }
           completeData = {label :  distributionLabel, data : distributionData };
@@ -140,6 +141,98 @@ module.exports = function(app,passport) {
           res.json(completeData);
         });
       });
+
+      app.get('/api/getCurrentDistributionData', function(req, res) {
+        /* To Handle server re-starts */
+        if(req.user === undefined)
+          res.redirect('/');
+          /* To Handle server re-starts */
+
+        var query = {userid: req.user._id};
+
+        //var query = { userid: "56b13abdd5921d263cb3ffb3"};
+        var distributionLabel = [];
+        var distributionData = [];
+        var completeData = {};
+        var stockMap = new NodeCache();
+
+        userPortfolio2.find(query,function(err, userPortfolios) {
+          // if there is an error retrieving, send the error. nothing after res.send(err) will execute
+          //console.log(JSON.stringify(userPortfolios));
+          if (err){
+            console.log("Error:"+ err);
+            res.send(err);
+          }
+          for (porData in userPortfolios){
+            stockMap.set(userPortfolios[porData].symbol,userPortfolios[porData].shares_qty);
+          }
+
+          async.waterfall([
+            function A(done){
+              var count = 0;
+              var totalStockQty = 0, percentShare = 0;
+              var userPortfolios1  = userPortfolios;
+              var stockqty = 0;
+              for (porData in userPortfolios){
+                var url = "http://finance.yahoo.com/webservice/v1/symbols/"+userPortfolios[porData].symbol+"/quote?format=json&view=detail";
+                request(url, function (error, response, body) {
+                  count++;
+                  if (!error && response.statusCode == 200) {
+                    body = JSON.parse(body);
+                    //console.log(JSON.stringify(body));
+                    stockqty = stockMap.get(body.list.resources[0].resource.fields.symbol);
+                    totalStockQty = parseInt(totalStockQty) + (parseInt(stockqty)*parseInt(body.list.resources[0].resource.fields.price));
+                    //console.log("Total"+totalStockQty);
+                    if(count === userPortfolios.length){
+                      //console.log("Calling Done" + count + ":" + userPortfolios.length +" : " + totalStockQty);
+                      done(null,totalStockQty,userPortfolios);
+                    }
+                  }
+                  if (error){
+                    console.log("ERROR"+error);
+                    //done(error);
+                  }
+                });
+              }
+
+            },function B(totalStockQty,userPortfolios,done){
+              var getCurrentData = function(userPortfolio,done){
+                  var url = "http://finance.yahoo.com/webservice/v1/symbols/"+userPortfolio.symbol+"/quote?format=json&view=detail";
+                  request(url, function (error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                      body = JSON.parse(body);
+                      distributionLabel.push(userPortfolio.name);
+                      percentShare = parseFloat((parseFloat(parseInt(userPortfolio.shares_qty)*parseInt(body.list.resources[0].resource.fields.price)).toFixed(2)/
+                                      totalStockQty)*100).toFixed(2);
+                      distributionData.push(percentShare);
+                      done(null,distributionData,distributionLabel);
+                    }
+                    if (error){
+                      console.log("ERROR"+error);
+                    }
+                  });
+              }
+
+              async.each(userPortfolios, getCurrentData, function(err){
+                if (err){
+                  console.log("Error"+err);
+                  done(err);// either file1, file2 or file3 has raised an error, so you should not use results and handle the error
+                } else {
+                  completeData = {label :  distributionLabel, data : distributionData };
+                  res.json(completeData);
+                  //done(null,completeData);
+                }
+              });
+
+            }
+          ],function(err,completeData){
+            console.log("Error:"+ err);
+            res.send(err);
+          });
+
+        });
+      });
+
 
       // Provides Data for 1 year and more (in months)
       app.get('/api/getMonthlyPerformanceData', function(req, res) {
@@ -361,7 +454,7 @@ module.exports = function(app,passport) {
 
                             completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
                             //console.log(JSON.stringify(completeData));
-                            res.json(completeData);
+                            res.json(completeData);3
                       });
                     }else{
                       res.json("");

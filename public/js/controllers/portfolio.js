@@ -124,7 +124,9 @@ angular.module('easyFin4uApp')
                                                       renderDistributionGraph($piechart);
 
                                                     }
-                                                    fail: { console.log("EDIT"+result.responseText); }
+                                                    fail: {
+                                                      //console.log("EDIT"+result.responseText);
+                                                  }
                                                 },
                                     beforeShowForm: function(form) {
                                       $('#name', form).attr("disabled","true");  //To Disable Edit Box
@@ -151,7 +153,9 @@ angular.module('easyFin4uApp')
                                                       renderDistributionGraph($piechart);
                                                       renderPerformanceGraph($linechart);
                                                     }
-                                                    fail: { console.log("ADD"+result.responseText); }
+                                                    fail: {
+                                                      //console.log("ADD"+result.responseText);
+                                                    }
                                                 },
                                   beforeShowForm: function(form) {
                                     $('#name', form).attr("disabled","true");  //To Disable Edit Box
@@ -176,7 +180,9 @@ angular.module('easyFin4uApp')
                                                       renderDistributionGraph($piechart);
                                                       renderPerformanceGraph($linechart);
                                                     }
-                                                    fail: { console.log(result.responseText); }
+                                                    fail: {
+                                                      //console.log(result.responseText);
+                                                    }
                                                 }
                                 }
                                 );
@@ -223,7 +229,7 @@ angular.module('easyFin4uApp')
                         document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
                       }
                     }else{
-                      console.log("Render"+JSON.stringify(response));
+                      //console.log("Render"+JSON.stringify(response));
                       $scope.noDataToDisplay = false;
                       $scope.spinnerLoaded = false;
                       $rootScope.linelabels = response.data.label;
@@ -259,7 +265,7 @@ angular.module('easyFin4uApp')
                         document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
                       }
                     }else{
-                      console.log("Render"+JSON.stringify(response));
+                      //console.log("Render"+JSON.stringify(response));
                       $scope.noDataToDisplay = false;
                       $scope.spinnerLoaded = false;
                       $rootScope.linelabels = response.data.label;
@@ -297,7 +303,7 @@ angular.module('easyFin4uApp')
                         document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
                       }
                     }else{
-                      console.log("Render"+JSON.stringify(response));
+                      //console.log("Render"+JSON.stringify(response));
                       $scope.noDataToDisplay = false;
                       $scope.spinnerLoaded = false;
                       $rootScope.linelabels = response.data.label;
@@ -332,7 +338,7 @@ angular.module('easyFin4uApp')
                         document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
                       }
                     }else{
-                      console.log("Render"+JSON.stringify(response));
+                      //console.log("Render"+JSON.stringify(response));
                       $scope.noDataToDisplay = false;
                       $scope.spinnerLoaded = false;
                       $rootScope.linelabels = response.data.label;
@@ -365,7 +371,7 @@ angular.module('easyFin4uApp')
                         document.getElementsByClassName("line-legend")[0].style.visibility='hidden';
                       }
                     }else{
-                      console.log("Render"+JSON.stringify(response));
+                      //console.log("Render"+JSON.stringify(response));
                       $scope.noDataToDisplay = false;
                       $scope.spinnerLoaded = false;
                       $rootScope.linelabels = response.data.label;
@@ -379,6 +385,7 @@ angular.module('easyFin4uApp')
                 });
               }
 
+              renderDistributionGraph($piechart);
 
               $scope.pieOptions = {
                 animationEasing : "easeOutBounce",
@@ -388,7 +395,7 @@ angular.module('easyFin4uApp')
               };
 
               function renderDistributionGraph($piechart){
-                $http.get("/api/getDistributionData").then(function(response) {
+                $http.get("/api/getOriginalDistributionData").then(function(response) {
                   if(response.data.label.length === 0){
                     $scope.noDataToDisplayPie = true;
                     $rootScope.pielabels = [];
@@ -406,8 +413,28 @@ angular.module('easyFin4uApp')
                 });
               }
 
-              renderDistributionGraph($piechart);
-              /* Added to Fix the Flicker Bug of Angular Charts */
+              renderDistributionGraphCurrent();
+
+              function renderDistributionGraphCurrent(){
+                $http.get("/api/getCurrentDistributionData").then(function(response) {
+                  if(response.data.label.length === 0){
+                    $scope.noDataToDisplayPie = true;
+                    $rootScope.pielabelsC = [];
+                    $rootScope.piedataC = [];
+                    // if($piechartC !== undefined){
+                    //   $piechart.destroy();
+                    //   document.getElementsByClassName("pie-legend")[0].style.visibility='hidden';
+                    // }
+                  }else{
+                    $scope.noDataToDisplayPie = false;
+                    $rootScope.pielabelsC = response.data.label;
+                    $rootScope.piedataC = response.data.data;
+                  }
+
+                });
+              }
+
+          /* Added to Fix the Flicker Bug of Angular Charts */
               // var $chart;
               //   $scope.$on("create", function (event, chart) {
               //     if (typeof $chart !== "undefined") {

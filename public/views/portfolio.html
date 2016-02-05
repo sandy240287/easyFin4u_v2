@@ -108,8 +108,19 @@
                             <i class="fa fa-frown-o fa-5x"></i>
                           <h3> No Data to Display </h3>
                       </div>
+                      <p style="text-align:right;"> <u> Original Distribution </u> </p>
                       <canvas id="pie" class="chart chart-pie" chart-legend="legend" chart-options="pieOptions"
                         chart-data="piedata" chart-labels="pielabels">
+                      </canvas>
+                    </p>
+                    <p>
+                      <div class="text-center" ng-show="noDataToDisplayPie">
+                            <i class="fa fa-frown-o fa-5x"></i>
+                          <h3> No Data to Display </h3>
+                      </div>
+                      <p style="text-align:right;"><u> Current Distribution </u> </p>
+                      <canvas id="pieC" class="chart chart-pie" chart-legend="legendC" chart-options="pieOptions"
+                        chart-data="piedataC" chart-labels="pielabelsC">
                       </canvas>
                     </p>
 

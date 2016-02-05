@@ -5,7 +5,7 @@ angular.module('easyFin4uApp')
 		function($rootScope, $scope, $http,$location) {
       var userEmail = $scope.user;
       //console.log(userEmail);
-			console.log($rootScope.tncStatus);
+			//console.log($rootScope.tncStatus);
 
 			if(!$rootScope.tncStatus){
 					$location.url('/terms');
