@@ -488,7 +488,7 @@ module.exports = function(app,passport) {
             function getUserData(done){
                 var q1 = { $and: [] };
                 //var q2 = { $or: [] };
-                var q2 = { date: {$gte : 0, $lt: 0}};
+                var q2 = { date: {$gte : 0, $lte: 0}};
                 var q3 = { $or: [] };
                 // for(var i=0;i<=period;i++){
                 //   fomatted_date = moment(d).subtract(i, 'days').format('YYYY-MM-DD');
@@ -499,7 +499,7 @@ module.exports = function(app,passport) {
                 current_date = moment().format('YYYY-MM-DD');
                 history_date = moment().subtract(parseInt(period), 'days').format('YYYY-MM-DD');
                 q2.date.$gte = history_date;
-                q2.date.$lt = current_date;
+                q2.date.$lte = current_date;
 
                 //console.log(q2);
                 userPortfolio2.find(userQuery,function(err, userPortfolios) {
