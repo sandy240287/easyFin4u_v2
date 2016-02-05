@@ -399,7 +399,7 @@ module.exports = function(app,passport) {
                               res.send(err);
                             }
 
-                            /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                            /*Changes for Sorting by Name and then Date to take care of Daily data updates*/
                             stockValues.sort(SortByName);
                             //console.log(stockValues);
                             var performanceSeriesForCount = [], stockValueSorted = [];
@@ -535,6 +535,9 @@ module.exports = function(app,passport) {
                               done(null,stockValues);
                             }
                             else{
+                                  // Data Correction utility to correct the missing data points.
+                                  stockValues = dataCorrectionUtil(stockValues,q2.date.$gte,q2.date.$lte);
+
                                   /*Changes for Sorting by Name and then Date to take care of Daily data updates*/
                                   stockValues.sort(SortByName);
 
@@ -691,6 +694,81 @@ var getUserPortfolioData = function(req,res,done){
       if (err)
         console.log("ERROR"+err);
       });
+
+}
+
+/*
+OSCILLATING SEARCH APPROXIMATE DATA CORRECTION ALGORITHM
+Data Correction Utility for generating data for missing data points for the specified period.
+It works in the following way:-
+1. Loops through the Original Stock Values from Mongo to create a Map of all the available values with key (symbol_date);
+2. Loops through the Period of Data Displayed from History to Current Date , creates a dynamic key for symbol_date and checks for the
+   value in the Map. If the data is not present then it checks for the nearest date's data for the stock by performing a oscillating
+   search between historic dates and future dates.
+3. Once the data is found in any of the historic or future date , the Map is updated of the missing date data with the data found of the
+   historic or future date.
+4. After iterating through the complete Date and Equity possibilities. The map is transformed into an array of values and returned.
+*/
+function dataCorrectionUtil(stockValues,history_date,current_date) {
+  var correctionCache = new NodeCache();
+  var correctionData = undefined;
+  var correctionDataList = [];
+  var correctionDate;
+  var key, value, correctionKey;
+  for (stockValue in stockValues){
+    key = stockValues[stockValue].symbol + "_" + stockValues[stockValue].date;
+    value = stockValues[stockValue];
+    correctionCache.set(key,value);
+  }
+  //console.log("Initial Correction Cache :" + JSON.stringify(correctionCache.getStats()));
+  while(history_date <= current_date){
+    // TODO: The Loop for Stock Values is un-necessary.
+    //       It is going through all the stock values, it should rather only go through unique stock values.
+    for (stockValue in stockValues){
+      correctionKey = stockValues[stockValue].symbol + "_" + history_date;
+      //console.log("Correction Data Key:"+ correctionKey);
+      value = correctionCache.get(correctionKey);
+      if ( value == undefined ){
+        // handle miss!
+        var historySearch = true;
+        var counter = 1,period = 1;
+        do{
+          if(historySearch === true){
+            correctionDate = moment(history_date).subtract(period, 'days').format('YYYY-MM-DD');
+            fillerDataKey = stockValues[stockValue].symbol + "_" + correctionDate;
+            //console.log("Filler Data Key:"+ fillerDataKey);
+            correctionData = correctionCache.get(fillerDataKey);
+            historySearch = false;
+          }else{
+            correctionDate = moment(history_date).add(period, 'days').format('YYYY-MM-DD');
+            fillerDataKey = stockValues[stockValue].symbol + "_" + correctionDate;
+            //console.log("Filler Data Key:"+ fillerDataKey);
+            correctionData = correctionCache.get(fillerDataKey);
+            historySearch = true;
+          }
+          //console.log("Counter:"+counter);
+          //console.log("Period:"+period);
+          if(counter%2 === 0){
+            period++;
+          }
+          counter++;
+        }while(correctionData === undefined);
+
+        correctionData.date = history_date;
+        correctionCache.set(correctionKey,correctionData);
+
+      }
+    }
+    history_date = moment(history_date).add(1, 'days').format('YYYY-MM-DD');
+  }
+  //console.log("Final Correction Cache :" + JSON.stringify(correctionCache.getStats()));
+  allCorrectionkeys = correctionCache.keys();
+
+  for (key in allCorrectionkeys){
+    correctionDataList.push(correctionCache.get(allCorrectionkeys[key]));
+  }
+  //console.log("Final Correction List :" + JSON.stringify(correctionDataList));
+  return correctionDataList;
 
 }
 
