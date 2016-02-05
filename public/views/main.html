@@ -15,8 +15,8 @@
 	top:50%;
 }
 
-.carousel-control.right{right:-30px;}
-.carousel-control.left{left:-30px;}
+.carousel-control.right{right:30px;}
+.carousel-control.left{left:30px;}
 
 .carousel{
 	height: 300px;
@@ -53,7 +53,7 @@
 	font-weight: 400
 }
 </style>
-<div class="container">
+<div class="container-fluid" ng-controller="mainController">
 
     <div class="jumbotron text-center">
         <h1><span class="fa fa-lock"></span> Easy Finance Watch</h1>
@@ -67,8 +67,12 @@
 
     <!--Carousel
 ==================================================-->
-<div id="myCarousel" class="carousel slide">
-  <div class="carousel-inner">
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+      </ol>
+  <div class="carousel-inner" role="listbox">
     <div class="active item">
       <div class="container">
         <div class="row">

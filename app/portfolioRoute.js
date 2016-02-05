@@ -535,7 +535,7 @@ module.exports = function(app,passport) {
                               done(null,stockValues);
                             }
                             else{
-                                  /*Changes for Sorting by Name and then Date to take care of Daildy data updates*/
+                                  /*Changes for Sorting by Name and then Date to take care of Daily data updates*/
                                   stockValues.sort(SortByName);
 
                                   var performanceSeriesForCount = [], stockValueSorted = [];
