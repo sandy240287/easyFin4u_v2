@@ -105,7 +105,7 @@ angular.module('easyFin4uApp')
 				           	pager: '#pager2',
 				            viewrecords: true,
 				            sortorder: "desc",
-				            caption:"Deposit List",
+				            caption:"Portfolio List",
 				            width:'100%',
 										height: '100%',
 				            editurl: "/api/userPortfolio",

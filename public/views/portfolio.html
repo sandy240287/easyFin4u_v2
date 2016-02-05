@@ -81,7 +81,8 @@
                       <li class="list-group-item"><a href="" ng-click="weeksData('8')">2m</a></li>
                       <li class="list-group-item"><a href="" ng-click="weeksData('12')">3m</a></li>
                       <li class="list-group-item"><a href="" ng-click="weeksData('24')">6m</a></li>
-                      <li class="list-group-item"><a href="" ng-click="monthsData('12')">1y</a></li>
+                      <!-- <li class="list-group-item"><a href="" ng-click="monthsData('12')">1y</a></li> -->
+                      <li class="list-group-item"><a href="" ng-click="weeksData('52')">1y</a></li>
                       <!-- <li class="list-group-item"><a href="" ng-click="all()">max</a></li> -->
                     </ul>
                   </div>
@@ -97,7 +98,8 @@
                             chart-legend="legend" chart-series="lineseries">
                       </canvas>
                     </p>
-
+                    <p style="font-size: 10px;text-align:left;margin-top: 0px;margin-bottom: 0px;"> Source: Yahoo finance API</p>
+                    <p style="font-size: 10px;text-align:left;margin-top: 0px;margin-bottom: 0px;"> * Approximate data guided by trend</p>
             </div>
         </div>
         <div class="col-sm-6">

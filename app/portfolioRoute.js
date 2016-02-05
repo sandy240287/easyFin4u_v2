@@ -399,6 +399,14 @@ module.exports = function(app,passport) {
                               res.send(err);
                             }
 
+                            var periodList = getSortedDateList(stockValues);
+
+                            /* Commenting the Unique Stock List logic due to Performance issues of approx 100ms for 1 yr data*/
+                            //var uniqueStockList = getSortedStockList(stockValues);
+                            //stockValues = weeklyDataCorrectionUtil(stockValues,periodList,uniqueStockList);
+
+                            stockValues = weeklyDataCorrectionUtil(stockValues,periodList,stockValues);
+
                             /*Changes for Sorting by Name and then Date to take care of Daily data updates*/
                             stockValues.sort(SortByName);
                             //console.log(stockValues);
@@ -519,7 +527,7 @@ module.exports = function(app,passport) {
                 });
             },function getData(q1,q2,q3,done){
                       //console.log(q2.$or.length + "     :     " + q3.$or.length);
-                      console.log(q1);
+                      //console.log(q1);
                       if(q3.$or.length > 0){
                         //console.log(q1);
                         historicalstock.find(q1,null,function(err, stockValues) {
@@ -528,7 +536,7 @@ module.exports = function(app,passport) {
                               console.log("Error:"+ err);
                               res.send(err);
                             }
-                            console.log(JSON.stringify(stockValues));
+                            //console.log(JSON.stringify(stockValues));
                             if(stockValues === undefined || stockValues.length===0){
                               //console.log("JSON EMPTY");
                               res.json(stockValues);
@@ -536,7 +544,7 @@ module.exports = function(app,passport) {
                             }
                             else{
                                   // Data Correction utility to correct the missing data points.
-                                  stockValues = dataCorrectionUtil(stockValues,q2.date.$gte,q2.date.$lte);
+                                  stockValues = dailyDataCorrectionUtil(stockValues,q2.date.$gte,q2.date.$lte);
 
                                   /*Changes for Sorting by Name and then Date to take care of Daily data updates*/
                                   stockValues.sort(SortByName);
@@ -586,7 +594,7 @@ module.exports = function(app,passport) {
                                   //console.log(performanceDataSpliced);
 
                                   completeData = {label :  performanceLabelUnique, series: performanceSeriesUnique,data : performanceDataSpliced };
-                                  console.log(JSON.stringify(completeData));
+                                  //console.log(JSON.stringify(completeData));
                                   res.json(completeData);
                                   done(null,completeData);
                                 }
@@ -616,6 +624,10 @@ module.exports = function(app,passport) {
 
       function SortByName(x,y) {
         return ((x.symbol == y.symbol) ? 0 : ((x.symbol > y.symbol) ? 1 : -1 ));
+      }
+
+      function SortByStringValue(x,y) {
+        return ((x == y) ? 0 : ((x > y) ? 1 : -1 ));
       }
 
 
@@ -709,7 +721,7 @@ It works in the following way:-
    historic or future date.
 4. After iterating through the complete Date and Equity possibilities. The map is transformed into an array of values and returned.
 */
-function dataCorrectionUtil(stockValues,history_date,current_date) {
+function dailyDataCorrectionUtil(stockValues,history_date,current_date) {
   var correctionCache = new NodeCache();
   var correctionData = undefined;
   var correctionDataList = [];
@@ -771,5 +783,98 @@ function dataCorrectionUtil(stockValues,history_date,current_date) {
   return correctionDataList;
 
 }
+
+function getSortedDateList(stockValues){
+  var periodList = [], periodListUnique = [];
+  for (stockValue in stockValues){
+    periodList.push(stockValues[stockValue].date);
+  }
+  periodListUnique = periodList.filter(function(elem, pos) {
+      return periodList.indexOf(elem) == pos;
+  });
+
+  periodListUnique = periodListUnique.sort(comp);
+  //console.log("periodListUnique:"+periodListUnique);
+  return periodListUnique;
+}
+
+function getSortedStockList(stockValues){
+  var stockList = [], stockListUnique = [];
+  for (stockValue in stockValues){
+    stockList.push(stockValues[stockValue].symbol);
+  }
+  stockListUnique = stockList.filter(function(elem, pos) {
+      return stockList.indexOf(elem) == pos;
+  });
+
+stockValues.sort(SortByStringValue);
+
+return stockValues;
+
+}
+
+function weeklyDataCorrectionUtil(stockValues,periodList,uniqueStockList){
+  var correctionCache = new NodeCache();
+  var correctionData = undefined;
+  var correctionDataList = [];
+  var correctionDate;
+  var key, value, correctionKey;
+  for (stockValue in stockValues){
+    key = stockValues[stockValue].symbol + "_" + stockValues[stockValue].date;
+    value = stockValues[stockValue];
+    correctionCache.set(key,value);
+  }
+  //console.log("Initial Correction Cache :" + JSON.stringify(correctionCache.getStats()));
+  for (dt in periodList){
+    history_date = periodList[dt];
+    // TODO: The Loop for Stock Values is un-necessary.
+    //       It is going through all the stock values, it should rather only go through unique stock values.
+    for (stockValue in uniqueStockList){
+      correctionKey = uniqueStockList[stockValue].symbol + "_" + history_date;
+      //console.log("Correction Data Key:"+ correctionKey);
+      value = correctionCache.get(correctionKey);
+      if ( value == undefined ){
+        // handle miss!
+        var historySearch = true;
+        var counter = 1,period = 1;
+        do{
+          if(historySearch === true){
+            correctionDate = moment(history_date).subtract(period, 'days').format('YYYY-MM-DD');
+            fillerDataKey = uniqueStockList[stockValue].symbol + "_" + correctionDate;
+            //console.log("Filler Data Key:"+ fillerDataKey);
+            correctionData = correctionCache.get(fillerDataKey);
+            historySearch = false;
+          }else{
+            correctionDate = moment(history_date).add(period, 'days').format('YYYY-MM-DD');
+            fillerDataKey = uniqueStockList[stockValue].symbol + "_" + correctionDate;
+            //console.log("Filler Data Key:"+ fillerDataKey);
+            correctionData = correctionCache.get(fillerDataKey);
+            historySearch = true;
+          }
+          //console.log("Counter:"+counter);
+          //console.log("Period:"+period);
+          if(counter%2 === 0){
+            period++;
+          }
+          counter++;
+        }while(correctionData === undefined);
+
+        correctionData.date = history_date;
+        correctionCache.set(correctionKey,correctionData);
+
+      }
+    }
+    //history_date = moment(history_date).add(1, 'days').format('YYYY-MM-DD');
+  }
+  //console.log("Final Correction Cache :" + JSON.stringify(correctionCache.getStats()));
+  allCorrectionkeys = correctionCache.keys();
+
+  for (key in allCorrectionkeys){
+    correctionDataList.push(correctionCache.get(allCorrectionkeys[key]));
+  }
+  //console.log("Final Correction List :" + JSON.stringify(correctionDataList));
+  return correctionDataList;
+}
+
 
 }

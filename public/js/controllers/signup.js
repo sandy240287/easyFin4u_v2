@@ -8,25 +8,31 @@ angular.module('easyFin4uApp')
 			$rootScope.successMessagePresent = false;
 
 			$scope.signup = function() {
-				console.log($scope.formData);
+				//console.log($scope.formData);
 				//$scope.formData = loginServices.login($scope.formData);
-				$http.post('/signup', $scope.formData)
-				.success(function(user){
-					// No error: authentication OK
-					console.log('Signup successful!');
-					console.log(user);
-					$rootScope.user = undefined;
-					$rootScope.messagePresent = true;
-					$rootScope.successMessagePresent = 'Signup successful! Please login using the credentials.';
-					$location.url('/login');
-				})
-				.error(function(err){
-					// Error: authentication failed
-					console.log('Signup failed!');
+
+				if($scope.formData.password !== $scope.formData.repassword){
 					$rootScope.dangerMessagePresent = true;
-					$rootScope.message = 'Signup failed! Please retry.';
-					$location.url('/signup');
-				});
-			};
+					$rootScope.message = 'Passwords do not match. Please re-check the password.';
+				}else{
+							$http.post('/signup', $scope.formData)
+							.success(function(user){
+								// No error: authentication OK
+								console.log('Signup successful!');
+								console.log(user);
+								$rootScope.user = undefined;
+								$rootScope.messagePresent = true;
+								$rootScope.successMessagePresent = 'Signup successful! Please login using the credentials.';
+								$location.url('/login');
+							})
+							.error(function(err){
+								// Error: authentication failed
+								console.log('Signup failed!');
+								$rootScope.dangerMessagePresent = true;
+								$rootScope.message = 'Signup failed. Email ID already present in system. Please click on Forgot Password to reset password.';
+								$location.url('/signup');
+							});
+					}
+				};
 
 	}]);
