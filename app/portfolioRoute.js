@@ -37,7 +37,7 @@ module.exports = function(app,passport) {
 
         var options = { upsert: 'true' };
         console.log(JSON.stringify(query));
-        console.log(JSON.stringify(userPortfolio));
+        console.log(JSON.stringify(req.body));
 
         userPortfolio.findOneAndUpdate(query, { $set: {
           symbol : req.body.symbol,

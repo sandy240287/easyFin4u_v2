@@ -122,6 +122,7 @@ angular.module('easyFin4uApp')
                                                     success: {
                                                       //alert(result.responseText);
                                                       renderDistributionGraph($piechart);
+                                                      renderDistributionGraphCurrent($pieChartC);
 
                                                     }
                                                     fail: {
@@ -152,6 +153,7 @@ angular.module('easyFin4uApp')
                                                       //alert(result.responseText);
                                                       renderDistributionGraph($piechart);
                                                       renderPerformanceGraph($linechart);
+                                                      renderDistributionGraphCurrent($pieChartC);
                                                     }
                                                     fail: {
                                                       //console.log("ADD"+result.responseText);
@@ -179,6 +181,7 @@ angular.module('easyFin4uApp')
                                                       //alert("DEL"+result.responseText);
                                                       renderDistributionGraph($piechart);
                                                       renderPerformanceGraph($linechart);
+                                                      renderDistributionGraphCurrent($pieChartC);
                                                     }
                                                     fail: {
                                                       //console.log(result.responseText);
@@ -192,13 +195,16 @@ angular.module('easyFin4uApp')
                           $grid.jqGrid("setGridWidth", newWidth, true);
 				     });
 
-             var $piechart,$linechart;
+             var $piechart,$linechart,$pieChartC;
              $scope.$on("create", function (event, chart) {
                if (typeof chart !== "undefined") {
-                 if((chart.id === 'chart-0')||(chart.id === 'chart-1')||(chart.id === 'chart-2')){
+                 if(chart.chart.canvas.id === 'pie'){
                    //alert(chart.id);
                    $piechart = chart;
-                 }else{
+                 }else if(chart.chart.canvas.id === 'pieC'){
+                   $piechartC = chart;
+                 }
+                 else{
                    $linechart = chart;
                  }
                }
@@ -413,18 +419,18 @@ angular.module('easyFin4uApp')
                 });
               }
 
-              renderDistributionGraphCurrent();
+              renderDistributionGraphCurrent($pieChartC);
 
-              function renderDistributionGraphCurrent(){
+              function renderDistributionGraphCurrent($pieChartC){
                 $http.get("/api/getCurrentDistributionData").then(function(response) {
                   if(response.data.label.length === 0){
                     $scope.noDataToDisplayPie = true;
                     $rootScope.pielabelsC = [];
                     $rootScope.piedataC = [];
-                    // if($piechartC !== undefined){
-                    //   $piechart.destroy();
-                    //   document.getElementsByClassName("pie-legend")[0].style.visibility='hidden';
-                    // }
+                    if($piechartC !== undefined){
+                      $piechartC.destroy();
+                      document.getElementsByClassName("pie-legendC")[0].style.visibility='hidden';
+                    }
                   }else{
                     $scope.noDataToDisplayPie = false;
                     $rootScope.pielabelsC = response.data.label;
