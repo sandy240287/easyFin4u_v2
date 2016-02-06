@@ -10,6 +10,7 @@ var User            = require('../app/models/user');
 // load the auth variables
 var configAuth = require('./auth');
 
+var crypto = require('crypto');
 // expose this function to our app using module.exports
 module.exports = function(passport) {
 
@@ -63,13 +64,16 @@ module.exports = function(passport) {
 
                 // if there is no user with that email
                 // create the user
-                var newUser            = new User();
+                var newUser = new User();
 
                 // set the user's local credentials
                 newUser.local.email    = email;
                 newUser.local.password = newUser.generateHash(password);
                 newUser.local.firstLogin = true;
                 newUser.local.tncStatus = false;
+                const buf = crypto.randomBytes(20);
+                newUser.local.userVerifyToken = buf.toString('hex');
+                newUser.local.userVerifyExpires = Date.now() + 3600000; //1 Hour
 
                 // save the user
                 newUser.save(function(err) {

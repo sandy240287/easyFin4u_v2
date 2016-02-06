@@ -2,6 +2,8 @@ var async = require('async');
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
+// var nconf = require('nconf');
+// nconf.argv().env().file({ file: './config.json' });
 
 // load up the user model
 var User            = require('../app/models/user');
@@ -69,10 +71,62 @@ module.exports = function(app, passport) {
     app.post('/signup', passport.authenticate('local-signup', {
         failureFlash : true // allow flash messages
     }),function(req, res) {
+      /*Code Chanegs for user verification email*/
+      // var options = {
+      //               service: nconf.get('mailService'),
+      //               auth: {
+      //                 user: nconf.get('user'),
+      //                 pass: nconf.get('pass')
+      //               }
+      //             };
+      var options = {
+                    service: 'SendGrid',
+                    auth: {
+                      user: '<email>',
+                      pass: '<password>'
+                    }
+                  };
+      var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
+      var mailOptions = {
+        to: req.user.local.email,
+        from: 'accountVerification@easyFin4u.com',
+        subject: 'Easy Finance Watch Account Verification',
+        text: 'You are receiving this because you (or someone else) have registered this email address with www.easyfinancewatch.com .\n\n' +
+          'Please click on the following link, or paste this into your browser to verify the account:\n\n' +
+          'http://' + req.headers.host + '/verify/' + req.user.local.userVerifyToken + '\n\n' +
+          'If you did not request this, please ignore this email and the account will be invalid .\n'
+      };
+      smtpTransporter.sendMail(mailOptions, function(err) {
+        if(!err)
+          console.log('An e-mail has been sent to ' + req.user.local.email + ' with further instructions.');
+      });
+      /*Code Chanegs for user verification email*/
         res.send({
           user : req.user,
           message: req.flash('signupMessage')
         });
+    });
+
+    // Verify Email ID using token routing
+    app.get('/verify/:token', function(req, res) {
+      User.findOne({ 'local.userVerifyToken': req.params.token,
+                     'local.userVerifyExpires': { $gt: Date.now() } }, function(err, user) {
+        if (!user) {
+          req.flash('error', 'Verification token is invalid or has expired.');
+          return res.redirect('/');
+        }
+
+        user.local.userVerifyToken = "";
+        user.local.userVerifyExpires = Date.now();
+
+        user.save(function(err) {
+          if(err){
+            console.log("Verify Email - User Save Error : "+ err);
+          }else{
+            return res.redirect('/');
+          }
+        });
+      });
     });
 
     // =====================================

@@ -6,7 +6,11 @@ angular.module('easyFin4uApp')
       var userEmail = $scope.user;
       //console.log(userEmail);
 			//console.log($rootScope.tncStatus);
-
+			if($rootScope.user){
+        if(($rootScope.user.local.userVerifyToken !== "") && ($rootScope.user.local.userVerifyToken !== undefined)){
+          $location.url('/login');
+        }
+      }
 			if(!$rootScope.tncStatus){
 					$location.url('/terms');
 			}else{
@@ -18,7 +22,8 @@ angular.module('easyFin4uApp')
       if(!userEmail)
         $location.url('/login');
 			else{
-							var firstLogin = $scope.user.local.firstLogin;
+							var firstLogin = $rootScope.user.local.firstLogin;
+							console.log(JSON.stringify($rootScope.user));
 				      angular.element(document).ready(function () {
 
 								$(window).on("resize", function () {
@@ -144,7 +149,7 @@ angular.module('easyFin4uApp')
 														          });
 														if(firstLogin === "true"){
 															intro.start();
-															$scope.user.local.firstLogin = "false";
+															$rootScope.user.local.firstLogin = "false";
 														}
 														intro.oncomplete(function() {
 														  $('.introjs-overlay').hide();

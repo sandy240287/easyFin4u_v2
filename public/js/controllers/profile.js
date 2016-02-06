@@ -5,6 +5,12 @@ angular.module('easyFin4uApp')
 		function($rootScope, $scope, $http,$location, loginServices) {
 			$scope.user =  $rootScope.user;
 
+			if($rootScope.user){
+        if(($rootScope.user.local.userVerifyToken !== "") && ($rootScope.user.local.userVerifyToken !== undefined)){
+          $location.url('/login');
+        }
+      }
+
 			$rootScope.logout = function(){
 				//console.log("Logout");
 				//$rootScope = undefined;

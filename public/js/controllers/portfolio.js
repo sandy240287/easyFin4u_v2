@@ -28,6 +28,12 @@ angular.module('easyFin4uApp')
       var piedata1 = "";
       //console.log(userEmail);
 
+      if($rootScope.user){
+        if(($rootScope.user.local.userVerifyToken !== "") && ($rootScope.user.local.userVerifyToken !== undefined)){
+          $location.url('/login');
+        }
+      }
+
       if(!$rootScope.tncStatus){
 					$location.url('/terms');
 			}else{
@@ -209,6 +215,7 @@ angular.module('easyFin4uApp')
              var $piechart,$linechart,$pieChartC;
              $scope.$on("create", function (event, chart) {
                if (typeof chart !== "undefined") {
+                 chart.clear();
                  if(chart.chart.canvas.id === 'pie'){
                    //alert(chart.id);
                    $piechart = chart;

@@ -18,11 +18,11 @@ angular.module('easyFin4uApp')
 							$http.post('/signup', $scope.formData)
 							.success(function(user){
 								// No error: authentication OK
-								console.log('Signup successful!');
-								console.log(user);
+								//console.log('Signup successful!');
+								//console.log(user);
 								$rootScope.user = undefined;
 								$rootScope.messagePresent = true;
-								$rootScope.successMessagePresent = 'Signup successful! Please login using the credentials.';
+								$rootScope.successMessagePresent = 'Signup successful! Verification Mail has been sent to registered email ID.Please verify using the link in the mail and login using the credentials.';
 								$location.url('/login');
 							})
 							.error(function(err){
