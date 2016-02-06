@@ -7,7 +7,18 @@ angular.module('easyFin4uApp')
     });
     // Configure all line charts
     ChartJsProvider.setOptions('Line', {
-      datasetFill: false
+      datasetFill: false,
+        //Boolean - Whether to show a dot for each point
+      pointDot : true,
+
+      //Number - Radius of each point dot in pixels
+      pointDotRadius : 3,
+
+      //Number - Pixel width of point dot stroke
+      pointDotStrokeWidth : 1,
+
+      //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+      pointHitDetectionRadius : 3
     });
   }])
 	.controller('portfolioController', ['$rootScope','$scope','$http','$location','$timeout','$q',
