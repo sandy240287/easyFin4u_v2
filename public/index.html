@@ -127,6 +127,12 @@
     // } else {
     //   s1.src="/javascripts/jquerymobile.jqGrid.min.js";
     // }
+
+    window.onbeforeunload = function() {
+      return "You will be logged out on refresh and would need to re-login."
+    }
+
+
     </script>
 
 
