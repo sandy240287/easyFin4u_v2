@@ -128,7 +128,54 @@
 
             </div>
         </div>
-
     </div>
+
+    <!-- <div id="manage_alert" role="dialog" title="Manage Alerts" class="container" style="display:none;"> -->
+    <!--Modal Popup for Alert Management -->
+    <!-- <div class="ui-jqdialog ui-widget ui-widget-content ui-corner-all" id="manage_alert_container" role="dialog"  aria-hidden="false" style="width: 500px; height: auto; z-index: 950; overflow: hidden; top: 133px; left: 311px; display: none;">
+       <div class="ui-jqdialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" id="manage_alert_title" style="cursor: move;"><span class="ui-jqdialog-title" style="float: left;">Manage Alerts</span><a class="ui-jqdialog-titlebar-close ui-corner-all" style="right: 0.3em;"><span class="ui-icon ui-icon-closethick"></span></a></div> -->
+         <div style="font-size: 12px;line-height: 1.5;padding-top: 0px;padding-bottom: 0px; "class="ui-jqdialog-content ui-widget-content" id="manage_alert_content">
+          <div>
+             <form name="FormPost" id="manage_alert_frm" class="FormGrid" onsubmit="return false;" style="width:auto;height:auto;">
+                <div class="FormError ui-state-error" style="display:none;"></div>
+                <div class="tinfo topinfo"></div>
+                <table id="manage_alert_table" class="EditTable ui-common-table">
+                   <tbody>
+                      <tr rowpos="1" class="FormData" id="tr_symbol">
+                         <td class="CaptionTD"><label for="alert_symbol">Symbol</label></td>
+                         <td class="DataTD">&nbsp;<input type="text" id="alert_symbol" name="alert_symbol" rowid="_empty" role="textbox" class="FormElement ui-widget-content ui-corner-all ui-autocomplete-input" autocomplete="off" disabled="disabled"><span role="status" aria-live="polite" class="ui-helper-hidden-accessible"></span></td>
+                      </tr>
+                      <tr rowpos="2" class="FormData" id="tr_current_price">
+                         <td class="CaptionTD"><label for="alert_current_price">Current Price</label></td>
+                         <td class="DataTD">&nbsp;<input type="text" id="alert_current_price" name="alert_current_price" rowid="_empty" role="textbox" class="FormElement ui-widget-content ui-corner-all" disabled="disabled"></td>
+                      </tr>
+                      <tr rowpos="3" class="FormData" id="tr_lower_limit">
+                         <td class="CaptionTD"><label for="alert_lower_limit">Lower Limit</label></td>
+                         <td class="DataTD">&nbsp;<input type="text" id="alert_lower_limit" name="alert_lower_limit" rowid="_empty" role="textbox" class="FormElement ui-widget-content ui-corner-all"></td>
+                      </tr>
+                      <tr rowpos="4" class="FormData" id="tr_upper_limit">
+                         <td class="CaptionTD"><label for="alert_upper_limit">Upper Limit</label></td>
+                         <td class="DataTD">&nbsp;<input type="text" id="alert_upper_limit" name="alert_upper_limit" rowid="_empty" role="textbox" class="FormElement ui-widget-content ui-corner-all"></td>
+                      </tr>
+                      <tr rowpos="5" class="FormData" id="tr_alert_active_status">
+                         <td class="CaptionTD"><label for="alert_active_status">Alert Status</label></td>
+                         <td class="DataTD" style="display:inline-flex">
+                         <input style="height: 22px;" type="radio" name="alert_active_status" id="alert_active_status_true" value="true" role="radio" class="FormElement ui-widget-content ui-corner-all"> Enable Alerts
+                         <input style="height: 22px;" type="radio" name="alert_active_status" id="alert_active_status_false" value="false" role="radio" class="FormElement ui-widget-content ui-corner-all"> Disable Alerts
+                         </td>
+                      </tr>
+                      <tr class="FormData" style="display:none">
+                         <td class="CaptionTD"></td>
+                         <td colspan="1" class="DataTD"><input class="FormElement" id="alert_objectId" type="text" name="alert_objectId" value="_empty"></td>
+                      </tr>
+                   </tbody>
+                </table>
+             </form>
+          </div>
+       </div>
+       <div class="jqResize ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se"></div>
+    <!-- </div> -->
+    <!--Modal Popup for Alert Management -->
+    <!-- </div> -->
 
 </div>

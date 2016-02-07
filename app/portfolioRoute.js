@@ -41,12 +41,23 @@ module.exports = function(app,passport) {
         userPortfolioObj.name = req.body.name,
         userPortfolioObj.shares_qty = req.body.shares_qty,
         userPortfolioObj.cost_per_share = req.body.cost_per_share,
-        userPortfolioObj.userid = req.user._id
+        userPortfolioObj.userid = req.user._id,
+        userPortfolioObj.alert_active_status = "false";
+        userPortfolioObj.lower_limit = 0;
+        userPortfolioObj.lower_alert_sent_counter = 0;
+        userPortfolioObj.lower_alert_sent_dt = new Date();
+        userPortfolioObj.lower_alert_sent_price = 0;
+        userPortfolioObj.upper_limit = 0;
+        userPortfolioObj.upper_alert_sent_counter = 0;
+        userPortfolioObj.upper_alert_sent_dt = new Date();
+        userPortfolioObj.upper_alert_sent_price = 0;
 
-        userPortfolioObj.save(function(err) {
-                if (err)
+        userPortfolioObj.save(function(err,userPor) {
+                if (err){
                     throw err;
-                getUserPortfolioData(req,res);
+                    console.log("Error in inserting alert:"+ err);
+                  }
+                    getUserPortfolioData(req,res);
             });
       }else if(req.body.oper === 'edit'){
 
@@ -695,7 +706,10 @@ var getUserPortfolioData = function(req,res,done){
               (parseFloat(parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)).toFixed(3)),
               gain_percent : parseFloat(((parseFloat(parseInt(userPortfolio.shares_qty)*parseInt(body.list.resources[0].resource.fields.price)).toFixed(3) -
               parseFloat(parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)).toFixed(3))/
-              (parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)))*100).toFixed(3)
+              (parseInt(userPortfolio.cost_per_share) * parseInt(userPortfolio.shares_qty)))*100).toFixed(3),
+              alert_active_status : userPortfolio.alert_active_status,
+              lower_limit : userPortfolio.lower_limit,
+              upper_limit : userPortfolio.upper_limit
 
             };
 
@@ -726,6 +740,39 @@ var getUserPortfolioData = function(req,res,done){
       });
 
 }
+
+
+
+app.post('/api/userPortfolioManageAlert', function(req, res) {
+
+  /* To Handle server re-starts */
+  if(req.user === undefined)
+    res.redirect('/');
+    /* To Handle server re-starts */
+
+    // create a Portfolio Data, information comes from AJAX request from Angular
+    var query = { $and: [ { userid: req.user._id }, { _id: req.body.objectId } ]};
+
+    var options = { upsert: 'true' };
+    console.log(JSON.stringify(query));
+    console.log(JSON.stringify(req.body));
+
+    userPortfolio.findOneAndUpdate(query, { $set: {
+      lower_limit : req.body.lower_limit,
+      upper_limit : req.body.upper_limit,
+      alert_active_status : req.body.alert_active_status
+    }}, options, function(err, userPortfolio) {
+      if (err){
+        console.log("Error in Upserting Alert:" + err);
+        res.send(err);
+      }else{
+        res.send(userPortfolio);
+      }
+    });
+
+  });
+
+
 
 /*
 OSCILLATING SEARCH APPROXIMATE DATA CORRECTION ALGORITHM

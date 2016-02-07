@@ -57,6 +57,18 @@ cron.scheduleJob(rule, function(){
 });
 //Cron Scheduler for Reminder Service Ends - Runs everyday at 3 AM
 
+//Cron Scheduler for Profile Alert Service - Runs Mon-Fri at 7 AM EST / 5:30 PM IST
+var portfolioAlertService = require('./app/portfolioAlertService.js');
+var rule = new cron.RecurrenceRule();
+rule.dayOfWeek = [1,2,3,4,5];
+rule.hour = 7;
+rule.minute = 0;
+cron.scheduleJob(rule, function(){
+    console.log(new Date(), 'Calling the Portfolio Alerting Service');
+    portfolioAlertService.portfolioAlertService();
+});
+//Cron Scheduler for Reminder Service Ends - Runs everyday at 3 AM
+
 // listen (start app with node server.js) ======================================
 app.listen(port);
 console.log("App listening on port " + port);

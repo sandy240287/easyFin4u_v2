@@ -58,7 +58,8 @@ angular.module('easyFin4uApp')
 				           	url:'/api/userPortfolio',
 				            mtype: "GET",
 				        	  datatype: "json",
-				           	colNames:['objectId','Symbol','Name', 'Last Price', 'Change %','Shares','Cost Per Share','Cost Basis','Mkt Value','Gain','Gain %'],
+				           	colNames:['objectId','Symbol','Name', 'Last Price', 'Change %','Shares','Cost Per Share','Cost Basis','Mkt Value',
+                              'Gain','Gain %','alert_active_status','lower_limit','upper_limit'],
 				           	colModel:[
                     { name:'objectId', key: true, hidden: true },
                     { name:'symbol', width:80, align:"left",editable: true,editrules:{required: true},
@@ -116,7 +117,10 @@ angular.module('easyFin4uApp')
 				           		{name:'cost_basis', width:100,align:"right"},
 				           		{name:'mkt_value', width:100, align:"right"},
 				           		{name:'gain', width:80, align:"right"},
-				           		{name:'gain_percent', width:80, align:"right"}
+				           		{name:'gain_percent', width:80, align:"right"},
+                      {name:'alert_active_status', hidden: true },
+                      {name:'lower_limit', hidden: true },
+                      {name:'upper_limit', hidden: true }
 				           	],
 				           	rowNum:20,
 				           	rowList:[5,10,20,30],
@@ -207,6 +211,78 @@ angular.module('easyFin4uApp')
                                                 }
                                 }
                                 );
+
+                                $('#list2').navButtonAdd('#pager2',
+                                {
+                                    buttonicon: "ui-icon-mail-closed",
+                                    title: "Manage Alerts",
+                                    caption: "Manage Alerts",
+                                    position: "last",
+                                    onClickButton: openAlertsModal
+                                });
+
+                                function openAlertsModal(){
+
+                                  var myGrid = $('#list2'),
+                                      selRowId = myGrid.jqGrid ('getGridParam', 'selrow'),
+                                      selectedSymbol = myGrid.jqGrid ('getCell', selRowId, 'symbol'),
+                                      selectedCurrentPrice = myGrid.jqGrid ('getCell', selRowId, 'lastprice'),
+                                      selectedObjectId = myGrid.jqGrid ('getCell', selRowId, 'objectId'),
+                                      selectedLowerLimit = myGrid.jqGrid ('getCell', selRowId, 'lower_limit'),
+                                      selectedUpperLimit = myGrid.jqGrid ('getCell', selRowId, 'upper_limit'),
+                                      selectedAlertActiveStatus = myGrid.jqGrid ('getCell', selRowId, 'alert_active_status');
+
+                                  if(selectedSymbol === undefined)
+                                  {
+                                    alert("Please select a row first");
+                                  }else{
+                                    $("#manage_alert_content").dialog({
+                                        height:300,
+                                        width :400,
+                                        modal:true,
+                                        buttons:{
+                                            'Cancel': function(){
+                                                $(this).dialog('close');
+                                            },
+                                            'Confirm': function(){
+                                                //alert("Confirm");
+                                                $.ajax({
+                                                    type: "POST",
+                                                    url:  "/api/userPortfolioManageAlert",
+                                                    data: {
+                                                        objectId : $('#alert_objectId').val(),
+                                                        alert_active_status: $('input:radio[name=alert_active_status]:checked').val(),
+                                                        lower_limit: $('#alert_lower_limit').val(),
+                                                        upper_limit : $('#alert_upper_limit').val()
+                                                    },
+                                                    dataType: "json",
+                                                    success: function(msg){
+                                                        $("#manage_alert_content").dialog('close');
+                                                        alert("Successfully Updated your preferences.");
+                                                    },
+                                                    error: function(res, status, exeption) {
+                                                        $("#manage_alert_content").dialog('close');
+                                                        alert("Error while updating your preferences. Please retry");
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                    $('#ui-id-1').text("Manage Alerts");
+                                  }
+                                  $('#alert_symbol').val(selectedSymbol);
+                                  $('#alert_current_price').val(selectedCurrentPrice);
+                                  $('#alert_objectId').val(selectedObjectId);
+                                  $('#alert_lower_limit').val(selectedLowerLimit);
+                                  $('#alert_upper_limit').val(selectedUpperLimit);
+                                  if(selectedAlertActiveStatus === "true"){
+                                    $('#alert_active_status_true').attr('checked', true);
+                                  }
+                                  else {
+                                      $('#alert_active_status_false').attr('checked', true);
+                                  }
+
+                                }
 
                           var $grid = $("#list2"),
                           newWidth = $grid.closest(".ui-jqgrid").parent().width();
