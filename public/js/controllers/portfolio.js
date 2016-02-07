@@ -58,9 +58,10 @@ angular.module('easyFin4uApp')
 				           	url:'/api/userPortfolio',
 				            mtype: "GET",
 				        	  datatype: "json",
-				           	colNames:['Symbol','Name', 'Last Price', 'Change %','Shares','Cost Per Share','Cost Basis','Mkt Value','Gain','Gain %'],
+				           	colNames:['objectId','Symbol','Name', 'Last Price', 'Change %','Shares','Cost Per Share','Cost Basis','Mkt Value','Gain','Gain %'],
 				           	colModel:[
-                    {name:'symbol', width:80, align:"left", key:true ,editable: true,editrules:{required: true},
+                    { name:'objectId', key: true, hidden: true },
+                    { name:'symbol', width:80, align:"left",editable: true,editrules:{required: true},
                           editoptions: {
                                           "dataInit": function(el) {
                                             setTimeout(function() {

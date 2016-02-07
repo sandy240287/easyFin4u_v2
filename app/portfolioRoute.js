@@ -30,10 +30,28 @@ module.exports = function(app,passport) {
         /* To Handle server re-starts */
 
       //console.log("POST"+JSON.stringify(req.body, null, 2));
-      if((req.body.oper === 'add') || (req.body.oper === 'edit')){
+      if(req.body.oper === 'add'){
 
         // create a Portfolio Data, information comes from AJAX request from Angular
-        var query = { $and: [ { userid: req.user._id }, { symbol: req.body.symbol } ]};
+        console.log(JSON.stringify(req.body));
+
+        var userPortfolioObj = new userPortfolio();
+
+        userPortfolioObj.symbol = req.body.symbol,
+        userPortfolioObj.name = req.body.name,
+        userPortfolioObj.shares_qty = req.body.shares_qty,
+        userPortfolioObj.cost_per_share = req.body.cost_per_share,
+        userPortfolioObj.userid = req.user._id
+
+        userPortfolioObj.save(function(err) {
+                if (err)
+                    throw err;
+                getUserPortfolioData(req,res);
+            });
+      }else if(req.body.oper === 'edit'){
+
+        // create a Portfolio Data, information comes from AJAX request from Angular
+        var query = { $and: [ { userid: req.user._id }, { _id: req.body.id } ]};
 
         var options = { upsert: 'true' };
         console.log(JSON.stringify(query));
@@ -56,7 +74,7 @@ module.exports = function(app,passport) {
         });
       }else if(req.body.oper === 'del'){
 
-        var query = { $and: [ { userid: req.user._id }, { symbol: req.body.id } ]}; //Here id is the Key in the table
+        var query = { $and: [ { userid: req.user._id }, { _id: req.body.id } ]}; //Here id is the Key in the table
         //console.log("inside del :"+JSON.stringify(query, null, 2));
           userPortfolio.remove(query, function(err, deposit) {
             if (err){
@@ -664,7 +682,7 @@ var getUserPortfolioData = function(req,res,done){
             body = JSON.parse(body);
             //console.log(data.list.resources[1].fields.price);
             profileData = {
-
+              objectId : userPortfolio._id,
               symbol : userPortfolio.symbol,
               name : userPortfolio.name,
               lastprice : parseFloat(body.list.resources[0].resource.fields.price).toFixed(3),
