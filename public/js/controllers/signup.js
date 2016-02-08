@@ -21,9 +21,9 @@ angular.module('easyFin4uApp')
 								//console.log('Signup successful!');
 								//console.log(user);
 								$rootScope.user = undefined;
-								$rootScope.messagePresent = true;
-								$rootScope.successMessagePresent = 'Signup successful! Verification Mail has been sent to registered email ID.Please verify using the link in the mail and login using the credentials.';
-								$location.url('/login');
+								$rootScope.successMessagePresent = true;
+								$rootScope.message = 'Signup successful! Verification Mail has been sent to registered email ID.Please verify using the link in the mail and login using the credentials.';
+								//$location.url('/login');
 							})
 							.error(function(err){
 								// Error: authentication failed
