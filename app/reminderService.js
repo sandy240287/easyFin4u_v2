@@ -11,8 +11,10 @@ var smtpTransport = require('nodemailer-smtp-transport');
 //mongoose.connect(database.url); //Uncomment this line for Standalone execution
 var userCache = new NodeCache();
 
-module.exports = {reminderService: function() {
-  //function reminderService(){
+module.exports =  function (config) {    //Comment these lines for Standalone execution
+var module = {};                         //Comment these lines for Standalone execution
+module.reminderService = function(config){  //Comment these lines for Standalone execution
+
     async.waterfall([
       function createUserCache(done){
 
@@ -58,10 +60,10 @@ module.exports = {reminderService: function() {
                   var userEmail = userCache.get(deposits[deposit].userid);
                   //console.log(userEmail);
                   var options = {
-                                service: 'SendGrid',
+                                service: config.appconfig.senderService,
                                 auth: {
-                                  user: '<email>',
-                                  pass: '<password>'
+                                  user: config.appconfig.senderEmail,
+                                  pass: config.appconfig.senderPass
                                 }
                               };
                   var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
@@ -94,6 +96,6 @@ module.exports = {reminderService: function() {
             process.exit(1);
         }
     });
-  //}
   }
+    return module;  //Comment these lines for Standalone execution
 }

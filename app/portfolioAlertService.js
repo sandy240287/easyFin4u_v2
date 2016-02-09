@@ -9,13 +9,16 @@ var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var request = require('request');
 
+//var config = require('konfig')({ path: '../config' }); //Uncomment this line for Standalone execution
 //mongoose.connect(database.url); //Uncomment this line for Standalone execution
 //mongoose.set('debug', true);    //Uncomment this line for Standalone execution
 
 var userCache = new NodeCache();
 var alertDataCache = new NodeCache();
 
-module.exports = { portfolioAlertService : function() {      //Comment these lines for Standalone execution
+module.exports =  function (config) {    //Comment these lines for Standalone execution
+var module = {};                         //Comment these lines for Standalone execution
+module.portfolioAlertService = function(config){  //Comment these lines for Standalone execution
 
     async.waterfall([
       function createUserCache(done){
@@ -26,7 +29,7 @@ module.exports = { portfolioAlertService : function() {      //Comment these lin
               if (err){
                 //console.log("Error:"+ err);
                 done(err);
-                process.exit(1);
+                //process.exit(1);
               }else{
                 for(var user in users){
                     //console.log(users[user]._id+": "+users[user].local.email);
@@ -44,7 +47,7 @@ module.exports = { portfolioAlertService : function() {      //Comment these lin
               if (err){
                 console.log("Error:"+ err);
                 done(err);
-                process.exit(1);
+                //process.exit(1);
               }else{
                 //console.log(userPortfolios);
                 done(null,userPortfolios);
@@ -54,8 +57,9 @@ module.exports = { portfolioAlertService : function() {      //Comment these lin
         function gatherAlertData(userPortfolios,done){
           //console.log("Inside gatherAlertData");
           var updatedPortfolio;
+          var updatedPortfolioList = [];
 
-          var getCurrentEqityPrice = function(userPortfolio,done){
+          var getCurrentEquityPrice = function(userPortfolio,done){
 
             var url = "http://finance.yahoo.com/webservice/v1/symbols/"+userPortfolio.symbol+"/quote?format=json&view=detail";
 
@@ -123,7 +127,10 @@ module.exports = { portfolioAlertService : function() {      //Comment these lin
                 }
                 //console.log("Yahoo Data"+ JSON.stringify(updatedPortfolio));
 
-                done(null,updatedPortfolio);
+                if(updatedPortfolioList !== undefined)
+                  alertDataCache.set(updatedPortfolio.objectId,updatedPortfolio);
+
+                done(null,updatedPortfolioList);
               }
               if (error){
                 console.log("ERROR"+error);
@@ -132,14 +139,12 @@ module.exports = { portfolioAlertService : function() {      //Comment these lin
             });
           }
 
-          async.each(userPortfolios, getCurrentEqityPrice, function(err){
-            //console.log("alertData"+ JSON.stringify(updatedPortfolio));
+          async.each(userPortfolios, getCurrentEquityPrice, function(err){
+            //console.log(alertDataCache);
             if ( err){
+              console.log("Inside Error");
               done(err);// either file1, file2 or file3 has raised an error, so you should not use results and handle the error
             } else {
-              //console.log(updatedPortfolio.objectId);
-              alertDataCache.set(updatedPortfolio.objectId,updatedPortfolio);
-              //console.log(alertDataCache);
               done(null,alertDataCache);
             }
           });
@@ -150,16 +155,21 @@ module.exports = { portfolioAlertService : function() {      //Comment these lin
 
           var alertKeys = alertDataCache.keys();
           //console.log(alertKeys);
+          if(alertKeys.length === 0){
+            console.log("No mail to send for alerts");
+            done(null);
+            //process.exit(); //Comment for Standalone
+          }else{
           for (key in alertKeys){
             //console.log(alertKeys[key]);
             if(alertDataCache.get(alertKeys[key]) !== undefined){
               var userEmail = userCache.get(alertDataCache.get(alertKeys[key]).userid);
               //console.log(userEmail);
               var options = {
-                            service: 'SendGrid',
+                            service: config.appconfig.senderService,
                             auth: {
-                              user: '<email>',
-                              pass: '<password>'
+                              user: config.appconfig.senderEmail,
+                              pass: config.appconfig.senderPass
                             }
                           };
               var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
@@ -188,12 +198,14 @@ module.exports = { portfolioAlertService : function() {      //Comment these lin
             }
           }
         }
+        }
     ], function (error) {
         if (error) {
             console.log(error);
-            process.exit(1);
+            //process.exit(1);
         }
     });
 
   }     //Comment these lines for Standalone execution
+  return module;  //Comment these lines for Standalone execution
 }      //Comment these lines for Standalone execution

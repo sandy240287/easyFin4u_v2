@@ -8,7 +8,7 @@ var smtpTransport = require('nodemailer-smtp-transport');
 // load up the user model
 var User            = require('../app/models/user');
 
-module.exports = function(app, passport) {
+module.exports = function(app, passport,config) {
 
     // =====================================
     // HOME PAGE (with login links) ========
@@ -80,11 +80,11 @@ module.exports = function(app, passport) {
       //               }
       //             };
       var options = {
-                    service: 'SendGrid',
-                    auth: {
-                      user: '<email>',
-                      pass: '<password>'
-                    }
+                      service: config.appconfig.senderService,
+                      auth: {
+                        user: config.appconfig.senderEmail,
+                        pass: config.appconfig.senderPass
+                      }
                   };
       var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
       var mailOptions = {
@@ -192,11 +192,11 @@ module.exports = function(app, passport) {
               },
               function(token, user, done) {
                 var options = {
-                              service: 'SendGrid',
-                              auth: {
-                                user: '<email>',
-                                pass: '<password>'
-                              }
+                                service: config.appconfig.senderService,
+                                auth: {
+                                  user: config.appconfig.senderEmail,
+                                  pass: config.appconfig.senderPass
+                                }
                             };
                 var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
                 var mailOptions = {
@@ -258,11 +258,11 @@ module.exports = function(app, passport) {
             },
             function(user, done) {
               var options = {
-                            service: 'SendGrid',
-                            auth: {
-                              user: '<email>',
-                              pass: '<password>'
-                            }
+                              service: config.appconfig.senderService,
+                              auth: {
+                                user: config.appconfig.senderEmail,
+                                pass: config.appconfig.senderPass
+                              }
                           };
               var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
               var mailOptions = {

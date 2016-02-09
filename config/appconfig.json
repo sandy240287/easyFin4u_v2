@@ -1,0 +1,24 @@
+{
+    "default": {
+        "port": 3000
+    },
+
+    "development": {
+        "port": 3000,
+        "senderService": "SendGrid",
+        "senderEmail" : "<email>",
+        "senderPass" : "<pass>"
+    },
+
+    "test": {
+        "port": 3000
+    },
+
+    "staging": {
+        "port": #{process.env.PORT}
+    },
+
+    "production": {
+        "port": #{process.env.PORT}
+    }
+}
