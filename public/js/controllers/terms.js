@@ -17,7 +17,7 @@ angular.module('easyFin4uApp')
 					$rootScope.user = response;
 					$scope.messagePresent = false;
 					$scope.message = 'Aceeptance Successful';
-					$location.url('/fdDetails');
+					$location.url('/portfolio');
 				})
 				.error(function(response){
 					// Error: authentication failed

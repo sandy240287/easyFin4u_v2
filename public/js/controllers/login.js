@@ -32,7 +32,7 @@ angular.module('easyFin4uApp')
 								$rootScope.user.local.firstLogin = firstLogin;
 								$rootScope.successMessagePresent = false;
 								$scope.message = 'Login Successful';
-								$location.url('/fdDetails');
+								$location.url('/portfolio');
 							}
 						}).error(function (response){
 							$location.url('/login');

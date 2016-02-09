@@ -10,11 +10,11 @@ angular.module('easyFin4uApp')
 			 $rootScope.message = 'Logged out.';
 			 $http.get('/logout');
 		 };
-		 
+
 		 angular.element(document).ready(function () {
 
 					$('#myCarousel').carousel({
-			        interval: 3000
+			        interval: 5000
 			    });
 
 			    $('#myCarousel').carousel('cycle');
