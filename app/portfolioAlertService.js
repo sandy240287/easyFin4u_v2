@@ -14,12 +14,12 @@ var request = require('request');
 //mongoose.set('debug', true);    //Uncomment this line for Standalone execution
 
 var userCache = new NodeCache();
-var alertDataCache = new NodeCache();
 
 module.exports =  function (config) {    //Comment these lines for Standalone execution
 var module = {};                         //Comment these lines for Standalone execution
 module.portfolioAlertService = function(config){  //Comment these lines for Standalone execution
-
+  
+var alertDataCache = new NodeCache();
     async.waterfall([
       function createUserCache(done){
 
