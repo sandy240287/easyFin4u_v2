@@ -2,8 +2,6 @@ var async = require('async');
 var crypto = require('crypto');
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
-// var nconf = require('nconf');
-// nconf.argv().env().file({ file: './config.json' });
 
 // load up the user model
 var User            = require('../app/models/user');
@@ -179,39 +177,46 @@ module.exports = function(app, passport,config) {
               function(token, done) {
                 User.findOne({ 'local.email': req.body.email }, function(err, user) {
                   if (!user) {
-                    req.flash('error', 'No account with that email address exists.');
-                    return res.redirect('/forgot');
+                    var message = 'No account with that email address exists.';
+                    done(null,null,null);
+                    res.send(message);
+                  }else{
+                    user.local.resetPasswordToken = token;
+                    user.local.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+                    user.save(function(err) {
+                      done(err, token, user);
+                    });
                   }
-                  user.local.resetPasswordToken = token;
-                  user.local.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-
-                  user.save(function(err) {
-                    done(err, token, user);
-                  });
                 });
               },
               function(token, user, done) {
-                var options = {
-                                service: config.appconfig.senderService,
-                                auth: {
-                                  user: config.appconfig.senderEmail,
-                                  pass: config.appconfig.senderPass
-                                }
-                            };
-                var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
-                var mailOptions = {
-                  to: user.local.email,
-                  from: 'passwordreset@easyFin4u.com',
-                  subject: 'Easy Finance Watch Password Reset',
-                  text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-                    'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-                    'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-                    'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-                };
-                smtpTransporter.sendMail(mailOptions, function(err) {
-                  done(err, 'done',
-                      { message: req.flash('loginMessage','An e-mail has been sent to ' + user.local.email + ' with further instructions.')});
-                });
+                console.log(token + ":"  + user);
+                if(token === null || user === null)
+                {
+                  done(null);
+                }else{
+                  var options = {
+                                  service: config.appconfig.senderService,
+                                  auth: {
+                                    user: config.appconfig.senderEmail,
+                                    pass: config.appconfig.senderPass
+                                  }
+                              };
+                  var smtpTransporter = nodemailer.createTransport(smtpTransport(options));
+                  var mailOptions = {
+                    to: user.local.email,
+                    from: 'passwordreset@easyFin4u.com',
+                    subject: 'Easy Finance Watch Password Reset',
+                    text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+                      'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+                      'http://' + req.headers.host + '/reset/' + token + '\n\n' +
+                      'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+                  };
+                  smtpTransporter.sendMail(mailOptions, function(err) {
+                    done(err, 'done',
+                        { message: req.flash('loginMessage','An e-mail has been sent to ' + user.local.email + ' with further instructions.')});
+                  });
+                }
               }
             ], function(err) {
               if (err) return next(err);

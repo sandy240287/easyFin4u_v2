@@ -15,6 +15,12 @@ var cron2 = require('node-schedule');
 var path = require('path');
 var config = require('konfig')({ path: './config' });
 
+var log4js = require('log4js');
+log4js.loadAppender('file');
+log4js.addAppender(log4js.appenders.file('logs/easyfinancewatch.log'), 'easyfinancewatch');
+var logger = log4js.getLogger('easyfinancewatch');
+logger.setLevel('INFO');
+
 var database = require('./config/database'); 			// load the database config
 
 // configuration ===============================================================
@@ -42,9 +48,13 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash()); // use connect-flash for flash messages stored in session
 
+//Scribe Logger
+//app.use(scribe.express.logger()); //Log each request
+//app.use('/logs', scribe.webPanel());
+
 // routes ======================================================================
 require('./app/routes.js')(app, passport,config); // load our routes and pass in our app and fully configured passport
-require('./app/depositRoute.js')(app, passport); // load our routes and pass in our app and fully configured passport
+require('./app/depositRoute.js')(app, passport, logger); // load our routes and pass in our app and fully configured passport
 require('./app/portfolioRoute.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 //Cron Scheduler for Reminder Service Starts - Runs everyday at 3 AM

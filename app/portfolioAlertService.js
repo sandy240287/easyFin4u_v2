@@ -18,7 +18,7 @@ var userCache = new NodeCache();
 module.exports =  function (config) {    //Comment these lines for Standalone execution
 var module = {};                         //Comment these lines for Standalone execution
 module.portfolioAlertService = function(config){  //Comment these lines for Standalone execution
-  
+
 var alertDataCache = new NodeCache();
     async.waterfall([
       function createUserCache(done){
@@ -127,10 +127,10 @@ var alertDataCache = new NodeCache();
                 }
                 //console.log("Yahoo Data"+ JSON.stringify(updatedPortfolio));
 
-                if(updatedPortfolioList !== undefined)
+                if(updatedPortfolio !== undefined)
                   alertDataCache.set(updatedPortfolio.objectId,updatedPortfolio);
 
-                done(null,updatedPortfolioList);
+                done(null,alertDataCache);
               }
               if (error){
                 console.log("ERROR"+error);

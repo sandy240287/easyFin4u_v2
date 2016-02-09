@@ -15,6 +15,7 @@
     "express": "~4.0.0",
     "express-session": "~1.0.0",
     "konfig": "^0.2.1",
+    "log4js": "^0.6.31",
     "method-override": "~1.0.0",
     "moment": "2.0.0",
     "mongoose": "~3.8.1",
