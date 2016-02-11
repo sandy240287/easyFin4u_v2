@@ -131,7 +131,25 @@ angular.module('easyFin4uApp')
 				            width:'100%',
 										height: '100%',
 				            editurl: "/api/userPortfolio",
-				            rownumbers : true
+				            rownumbers : true,
+                    loadComplete: function() {
+                          var rowIds = $("#list2").jqGrid('getDataIDs');
+                          for(row in rowIds){
+                            if($("#list2").jqGrid('getCell', rowIds[row], 'gain_percent') < 0){
+                              $("#list2").jqGrid('setCell',rowIds[row],"gain_percent","",{color:'red'});
+                              $("#list2").jqGrid('setCell',rowIds[row],"gain","",{color:'red'});
+                            }else{
+                              $("#list2").jqGrid('setCell',rowIds[row],"gain_percent","",{color:'green'});
+                              $("#list2").jqGrid('setCell',rowIds[row],"gain","",{color:'green'});
+                            }
+                            if($("#list2").jqGrid('getCell', rowIds[row], 'chg_percent') < 0){
+                              $("#list2").jqGrid('setCell',rowIds[row],"chg_percent","",{color:'red'});
+                            }
+                            else {
+                              $("#list2").jqGrid('setCell',rowIds[row],"chg_percent","",{color:'green'});
+                            }
+                          }
+                      }
 				        });
 
 				        $("#list2").navGrid("#pager2",
@@ -553,4 +571,8 @@ angular.module('easyFin4uApp')
 				      $rootScope.message = 'Logged out.';
 				      $http.get('/logout');
 				    };
+
+            window.onbeforeunload = function() {
+              return "You will be logged out on refresh and would need to re-login."
+            }
 	}]);

@@ -18,4 +18,8 @@ angular.module('easyFin4uApp')
 				 $rootScope.message = 'Logged out.';
 				 $http.get('/logout');
 			 };
+
+			 window.onbeforeunload = function() {
+	       return "You will be logged out on refresh and would need to re-login."
+	     }
 	}]);

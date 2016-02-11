@@ -22,7 +22,7 @@ angular.module('easyFin4uApp')
 								//console.log(user);
 								$rootScope.user = undefined;
 								$rootScope.successMessagePresent = true;
-								$rootScope.message = 'Signup successful! Verification Mail has been sent to registered email ID.Please verify using the link in the mail and login using the credentials.';
+								$rootScope.message = 'Signup successful! Verification Mail has been sent to registered email ID.Please verify using the link in the mail and login using the credentials.Please allow a few minutes for the e-mail to arrive. If you do not receive the e-mail, please check your spam folder.';
 								//$location.url('/login');
 							})
 							.error(function(err){

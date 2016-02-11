@@ -48,5 +48,9 @@ angular.module('easyFin4uApp')
 				});
 			};
 
+			window.onbeforeunload = function() {
+	      return "You will be logged out on refresh and would need to re-login."
+	    }
+
 
 	}]);
