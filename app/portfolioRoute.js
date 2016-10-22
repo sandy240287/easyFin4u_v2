@@ -204,7 +204,10 @@ module.exports = function(app,passport) {
               var stockqty = 0;
               for (porData in userPortfolios){
                 var url = "http://finance.yahoo.com/webservice/v1/symbols/"+userPortfolios[porData].symbol+"/quote?format=json&view=detail";
-                request(url, function (error, response, body) {
+                var headers = {
+                    'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Mobile Safari/537.36'
+                };
+                request({ url: url, headers: headers }, function (error, response, body) {
                   count++;
                   if (!error && response.statusCode == 200) {
                     body = JSON.parse(body);
@@ -227,8 +230,11 @@ module.exports = function(app,passport) {
             },function B(totalStockQty,userPortfolios,done){
               var getCurrentData = function(userPortfolio,done){
                   var url = "http://finance.yahoo.com/webservice/v1/symbols/"+userPortfolio.symbol+"/quote?format=json&view=detail";
-                  request(url, function (error, response, body) {
-                    if (!error && response.statusCode == 200) {
+                  var headers = {
+                      'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Mobile Safari/537.36'
+                  };
+                  request({ url: url, headers: headers }, function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
                       body = JSON.parse(body);
                       distributionLabel.push(userPortfolio.name);
                       percentShare = parseFloat((parseFloat(parseInt(userPortfolio.shares_qty)*parseInt(body.list.resources[0].resource.fields.price)).toFixed(2)/
@@ -687,8 +693,10 @@ var getUserPortfolioData = function(req,res,done){
       var getSymbolData = function(userPortfolio,done){
 
         var url = "http://finance.yahoo.com/webservice/v1/symbols/"+userPortfolio.symbol+"/quote?format=json&view=detail";
-
-        request(url, function (error, response, body) {
+        var headers = {
+            'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.76 Mobile Safari/537.36'
+        };
+        request({ url: url, headers: headers }, function (error, response, body) {
           if (!error && response.statusCode == 200) {
             body = JSON.parse(body);
             //console.log(data.list.resources[1].fields.price);
